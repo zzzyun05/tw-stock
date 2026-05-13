@@ -172,7 +172,7 @@ body{background:var(--cream);color:var(--text);font-family:'Noto Sans TC',sans-s
 <div class="header no-banner" id="header">
   <div class="logo">
     <div class="logo-mark">台</div>
-    <div><div class="logo-text">台股研究站</div><div class="logo-sub">v2 · 8 產業</div></div>
+    <div><div class="logo-text">台股研究站</div><div class="logo-sub">v3 · 12 產業</div></div>
   </div>
   <div class="search-wrap">
     <span class="search-icon">🔍</span>
@@ -285,6 +285,45 @@ const SECTORS = {
   {id:"2881",name:"富邦金",ex:"tse",desc:"台灣第二大金控，旗下台北富邦銀行、富邦人壽，積極布局數位金融。",up:"—",mid:"富邦金（金控）",dn:"個人/企業客戶",clients:"個人、企業、法人",suppliers:"—",pe:"14.5",pb:"1.1",ps:"1.3",ev:"—",rev:["489B","445B","378B"],np:["38B","30B","52B"],wl:["壽險","銀行","Fintech"]},
   {id:"2886",name:"兆豐金",ex:"tse",desc:"政策性金融背景金控，以企金、外匯、貿易融資見長，國際業務佔比高。",up:"—",mid:"兆豐金（金控）",dn:"企業/法人客戶",clients:"企業、政府、法人",suppliers:"—",pe:"12.3",pb:"1.0",ps:"1.8",ev:"—",rev:["108B","98B","87B"],np:["19B","18B","16B"],wl:["外匯","貿易融資","銀行"]}
 ]},
+
+"AI伺服器/散熱":{ stocks:[
+  {id:"3017",name:"奇鋐",ex:"tse",desc:"全球最大散熱模組廠，AI伺服器液冷/氣冷散熱解決方案核心供應商，客戶涵蓋NVIDIA、Dell、HPE。",up:"銅材、鋁材供應商",mid:"奇鋐（散熱模組）",dn:"NVIDIA、Dell、HPE、廣達",clients:"NVIDIA、Dell、HPE、廣達、緯創",suppliers:"銅材廠、鋁材廠",pe:"28.0",pb:"6.5",ps:"3.2",ev:"21.0",rev:["62B","45B","32B"],np:["8B","5B","3B"],wl:["液冷散熱","AI伺服器","NVIDIA","GB200","散熱模組"]},
+  {id:"2237",name:"建準",ex:"tse",desc:"全球前三大散熱風扇廠，AI伺服器高效能風扇與液冷泵浦需求大幅成長，同時布局無人機馬達。",up:"馬達零件供應商",mid:"建準（風扇/馬達）",dn:"Dell、HP、Intel、各伺服器廠",clients:"Dell、HP、Intel、各伺服器廠",suppliers:"馬達零件廠",pe:"22.0",pb:"3.8",ps:"2.0",ev:"16.0",rev:["28B","24B","20B"],np:["4B","3B","2B"],wl:["散熱風扇","液冷散熱","AI伺服器","無人機"]},
+  {id:"3324",name:"雙鴻",ex:"tse",desc:"精密散熱模組廠，均溫板（Vapor Chamber）與液冷模組供應商，AI工作站與伺服器散熱需求強勁。",up:"銅材供應商",mid:"雙鴻（散熱模組）",dn:"AI伺服器廠、軍工電子廠",clients:"AI伺服器廠、軍工電子廠",suppliers:"銅材廠",pe:"30.0",pb:"5.5",ps:"3.5",ev:"22.0",rev:["15B","12B","10B"],np:["2.5B","2B","1.5B"],wl:["液冷散熱","均溫板","AI伺服器","軍用電子"]},
+  {id:"2400",name:"中華精測",ex:"tse",desc:"半導體測試介面（Test Socket）與高速連接器，AI晶片測試需求強勁，CoWoS先進封裝測試關鍵零件。",up:"精密材料供應商",mid:"中華精測（測試介面）",dn:"台積電、SK Hynix、Micron",clients:"台積電、SK Hynix、Micron",suppliers:"精密材料廠",pe:"35.0",pb:"8.0",ps:"6.0",ev:"26.0",rev:["8B","6B","5B"],np:["1.5B","1B","0.8B"],wl:["AI伺服器","CoWoS","HBM","半導體測試"]},
+  {id:"6669",name:"緯穎",ex:"tse",desc:"雲端超大規模（Hyperscale）伺服器ODM，Microsoft、Meta、Amazon核心伺服器供應商，AI伺服器比重快速提升。",up:"NVIDIA、Intel、AMD",mid:"緯穎（Hyperscale ODM）",dn:"Microsoft、Meta、Amazon、Google",clients:"Microsoft、Meta、Amazon、Google",suppliers:"NVIDIA、Intel、AMD",pe:"25.0",pb:"10.0",ps:"1.2",ev:"19.0",rev:["368B","298B","228B"],np:["16B","12B","8B"],wl:["AI伺服器","Hyperscale","Microsoft","Meta","AWS"]},
+  {id:"3057",name:"喬鼎",ex:"tse",desc:"高效能儲存伺服器（JBOD/JBOF）與AI推論伺服器設計製造，供應雲端業者與企業AI基礎建設。",up:"NVIDIA、各儲存元件廠",mid:"喬鼎（儲存伺服器）",dn:"雲端業者、企業客戶",clients:"雲端業者、企業AI客戶",suppliers:"NVIDIA、儲存元件廠",pe:"20.0",pb:"3.5",ps:"1.5",ev:"15.0",rev:["18B","15B","12B"],np:["2.5B","2B","1.5B"],wl:["AI伺服器","儲存","NVMe","雲端"]},
+  {id:"8299",name:"群電",ex:"tse",desc:"AI伺服器機架式電源供應器（RPS）與不斷電系統（UPS），AI資料中心電力管理關鍵供應商。",up:"電子零件供應商",mid:"群電（電源供應）",dn:"Dell、HPE、各伺服器廠",clients:"Dell、HPE、各伺服器廠",suppliers:"電子零件廠",pe:"22.0",pb:"4.0",ps:"2.0",ev:"16.0",rev:["22B","18B","15B"],np:["3.5B","2.8B","2B"],wl:["AI伺服器","電源供應器","UPS","資料中心"]}
+]},
+
+"PCB/載板":{ stocks:[
+  {id:"3037",name:"欣興",ex:"tse",desc:"全球最大ABF載板廠，供應高階CPU/GPU封裝基板，AI晶片需求帶動ABF載板嚴重供不應求。",up:"台光電、南亞電路板",mid:"欣興（ABF載板/HDI）",dn:"Intel、AMD、NVIDIA、台積電",clients:"Intel、AMD、NVIDIA、台積電",suppliers:"台光電、南亞電路板",pe:"18.0",pb:"2.8",ps:"2.0",ev:"13.0",rev:["105B","92B","118B"],np:["14B","10B","28B"],wl:["ABF載板","AI伺服器","CoWoS","先進封裝","HDI"]},
+  {id:"2313",name:"華通",ex:"tse",desc:"HDI高密度互連板與AI伺服器背板供應商，蘋果iPhone主板關鍵供應商之一。",up:"銅箔基板廠",mid:"華通（HDI PCB）",dn:"Apple、各伺服器廠",clients:"Apple、AI伺服器廠",suppliers:"銅箔基板廠",pe:"16.0",pb:"2.2",ps:"1.2",ev:"12.0",rev:["68B","62B","58B"],np:["8B","7B","6B"],wl:["HDI","Apple","AI伺服器","iPhone","PCB"]},
+  {id:"2316",name:"楠梓電",ex:"tse",desc:"多層板與特殊應用PCB廠，供應汽車電子、工業控制、通訊設備，車用PCB比重持續提升。",up:"銅箔基板廠、化學品廠",mid:"楠梓電（多層板）",dn:"車廠Tier1、工業廠",clients:"車廠Tier1、工業廠、通訊廠",suppliers:"銅箔基板廠",pe:"14.0",pb:"1.8",ps:"1.0",ev:"10.0",rev:["28B","26B","24B"],np:["3.5B","3B","2.5B"],wl:["PCB","車用電子","工業控制","5G"]},
+  {id:"2345",name:"智邦",ex:"tse",desc:"企業與資料中心網路交換器ODM廠，AI資料中心400G/800G高速乙太網路交換器需求爆發。",up:"Broadcom、Marvell",mid:"智邦（網路交換器ODM）",dn:"Microsoft、Amazon、Google、Meta",clients:"Microsoft、Amazon、Google、Meta",suppliers:"Broadcom、Marvell",pe:"28.0",pb:"6.0",ps:"2.5",ev:"21.0",rev:["58B","48B","38B"],np:["8B","6B","4B"],wl:["網通","AI伺服器","400G","乙太網路","資料中心"]},
+  {id:"3044",name:"健鼎",ex:"tse",desc:"高頻高速PCB廠，供應衛星通訊、5G基站、AI伺服器高頻板，技術門檻高。",up:"銅箔基板廠",mid:"健鼎（高頻PCB）",dn:"Starlink、5G設備廠",clients:"衛星業者、5G廠、AI伺服器廠",suppliers:"銅箔基板廠",pe:"18.0",pb:"3.0",ps:"2.5",ev:"13.0",rev:["32B","29B","25B"],np:["5.5B","4.8B","4B"],wl:["低軌衛星","PCB","5G","AI伺服器"]},
+  {id:"2383",name:"台光電",ex:"tse",desc:"高速覆銅基板（CCL）供應商，主供AI伺服器ABF載板、衛星通訊高頻PCB基材。",up:"玻纖廠、銅箔廠",mid:"台光電（覆銅基板）",dn:"健鼎、欣興、南亞電路板",clients:"健鼎、欣興、南亞電路板",suppliers:"玻纖廠、銅箔廠",pe:"22.0",pb:"3.8",ps:"2.8",ev:"16.0",rev:["29B","26B","24B"],np:["4.5B","4B","3.5B"],wl:["低軌衛星","ABF載板","CCL","AI伺服器"]},
+  {id:"2444",name:"兆遠",ex:"otc",desc:"特殊功能PCB與感測器基板，供應醫療設備、航太、工業自動化等高可靠度應用。",up:"銅箔基板廠",mid:"兆遠（特殊PCB）",dn:"醫療設備廠、航太廠",clients:"醫療設備廠、航太廠",suppliers:"銅箔基板廠",pe:"18.0",pb:"2.5",ps:"2.2",ev:"13.0",rev:["5B","4.5B","4B"],np:["0.8B","0.7B","0.6B"],wl:["PCB","醫療設備","航太","工業控制"]}
+]},
+
+"被動元件":{ stocks:[
+  {id:"2327",name:"國巨",ex:"tse",desc:"全球前三大被動元件廠，MLCC、電阻、電感全線產品，汽車電子、工業、AI伺服器為成長主力。",up:"鋼鐵廠、化學材料廠",mid:"國巨（被動元件）",dn:"各電子品牌廠",clients:"Apple、各品牌電子廠",suppliers:"化學材料廠、金屬廠",pe:"15.0",pb:"2.5",ps:"1.8",ev:"11.0",rev:["102B","95B","112B"],np:["15B","13B","20B"],wl:["MLCC","被動元件","車用電子","AI伺服器","工業控制"]},
+  {id:"2492",name:"華新科",ex:"tse",desc:"全球前五大MLCC廠，車用MLCC高溫高可靠度產品為強項，電動車需求帶動成長。",up:"化學材料廠",mid:"華新科（MLCC）",dn:"各電子廠、車廠",clients:"各電子品牌廠、車廠Tier1",suppliers:"化學材料廠",pe:"18.0",pb:"2.8",ps:"2.2",ev:"13.0",rev:["28B","25B","22B"],np:["4B","3.5B","3B"],wl:["MLCC","被動元件","車用電子","電動車"]},
+  {id:"2481",name:"強茂",ex:"tse",desc:"功率半導體（二極體、整流器、TVS）與電感，車用電子、工業電源、AI伺服器電源管理。",up:"矽晶圓廠",mid:"強茂（功率半導體）",dn:"車廠Tier1、工業廠",clients:"車廠Tier1、工業廠、電源廠",suppliers:"矽晶圓廠",pe:"16.0",pb:"2.0",ps:"1.5",ev:"12.0",rev:["18B","16B","15B"],np:["2.5B","2B","2B"],wl:["功率半導體","車用電子","電動車","AI伺服器"]},
+  {id:"2036",name:"華碩",ex:"tse",desc:"精密電感與變壓器廠，AI伺服器電源模組電感、車用充電電感需求強勁。",up:"金屬材料廠",mid:"華碩電（電感/變壓器）",dn:"台達電、光寶科、各電源廠",clients:"台達電、光寶科、各電源廠",suppliers:"金屬材料廠",pe:"14.0",pb:"1.8",ps:"1.2",ev:"10.0",rev:["12B","11B","10B"],np:["1.5B","1.3B","1B"],wl:["電感","變壓器","AI伺服器","電動車","被動元件"]},
+  {id:"2485",name:"兆赫",ex:"tse",desc:"RF同軸連接器與電感廠，5G基站、衛星通訊、車用天線射頻元件供應商。",up:"金屬材料廠",mid:"兆赫（RF元件）",dn:"5G設備廠、衛星通訊廠",clients:"5G設備廠、衛星通訊廠、車廠",suppliers:"金屬材料廠",pe:"16.0",pb:"2.2",ps:"1.8",ev:"12.0",rev:["8B","7B","6B"],np:["1.2B","1B","0.8B"],wl:["RF","5G","低軌衛星","車用天線","被動元件"]},
+  {id:"2457",name:"飛宏",ex:"tse",desc:"電源供應器與電動車充電樁（EVSE）廠，布局Level 2/DC Fast Charging市場，歐美市場滲透率高。",up:"電子零件供應商",mid:"飛宏（電源/充電樁）",dn:"Tesla、各電動車廠",clients:"Tesla、各電動車廠、充電網路業者",suppliers:"電子零件廠",pe:"20.0",pb:"3.0",ps:"1.8",ev:"15.0",rev:["22B","18B","15B"],np:["3B","2.5B","2B"],wl:["充電樁","電動車","電源供應器","DC Fast Charging"]}
+]},
+
+"網通/5G":{ stocks:[
+  {id:"2345",name:"智邦",ex:"tse",desc:"企業與資料中心網路交換器ODM廠，AI資料中心400G/800G高速乙太網路交換器需求爆發。",up:"Broadcom、Marvell",mid:"智邦（網路交換器ODM）",dn:"Microsoft、Amazon、Google、Meta",clients:"Microsoft、Amazon、Google、Meta",suppliers:"Broadcom、Marvell",pe:"28.0",pb:"6.0",ps:"2.5",ev:"21.0",rev:["58B","48B","38B"],np:["8B","6B","4B"],wl:["網通","AI伺服器","400G","乙太網路","資料中心"]},
+  {id:"2397",name:"友通",ex:"tse",desc:"工業電腦與網路設備廠，供應5G邊緣運算、工業IoT、智慧城市網路基礎設施。",up:"Intel、Qualcomm",mid:"友通（工業電腦/網通）",dn:"電信業者、工業IoT廠",clients:"電信業者、工業IoT廠",suppliers:"Intel、Qualcomm",pe:"18.0",pb:"2.5",ps:"1.5",ev:"13.0",rev:["12B","11B","10B"],np:["1.8B","1.5B","1.2B"],wl:["5G","工業IoT","邊緣運算","智慧城市"]},
+  {id:"3037",name:"欣興",ex:"tse",desc:"全球最大ABF載板廠，供應高階CPU/GPU封裝基板，AI晶片需求帶動ABF載板供不應求。",up:"台光電、南亞電路板",mid:"欣興（ABF載板）",dn:"Intel、AMD、NVIDIA",clients:"Intel、AMD、NVIDIA、台積電",suppliers:"台光電、南亞電路板",pe:"18.0",pb:"2.8",ps:"2.0",ev:"13.0",rev:["105B","92B","118B"],np:["14B","10B","28B"],wl:["ABF載板","AI伺服器","網通","5G"]},
+  {id:"3706",name:"神達",ex:"tse",desc:"電腦系統、網路設備ODM廠，近年積極布局AI伺服器與邊緣運算產品。",up:"Intel、NVIDIA",mid:"神達（ODM/網通）",dn:"HP、Dell、電信業者",clients:"HP、Dell、電信業者",suppliers:"Intel、NVIDIA",pe:"14.0",pb:"1.8",ps:"0.5",ev:"10.0",rev:["85B","78B","70B"],np:["8B","7B","5B"],wl:["網通","AI伺服器","邊緣運算","5G"]},
+  {id:"2462",name:"台勝科",ex:"tse",desc:"光纖預形體（OVD）與光纖製造，AI資料中心與5G骨幹網路光纖需求大幅成長。",up:"化學材料廠",mid:"台勝科（光纖）",dn:"中華電信、各電信業者",clients:"中華電信、各電信業者、資料中心",suppliers:"化學材料廠",pe:"22.0",pb:"3.5",ps:"3.0",ev:"16.0",rev:["8B","7B","6B"],np:["1.5B","1.2B","1B"],wl:["光纖","5G","AI伺服器","資料中心"]},
+  {id:"2498",name:"宏達電",ex:"tse",desc:"VR/AR頭戴裝置（VIVE）品牌廠，企業元宇宙、工業訓練、醫療VR為主力市場，同時布局5G應用。",up:"高通、台積電",mid:"宏達電（VR/AR）",dn:"企業/工業/醫療客戶",clients:"企業、工業訓練、醫療機構",suppliers:"高通、台積電",pe:"N/A",pb:"1.2",ps:"0.8",ev:"N/A",rev:["12B","11B","14B"],np:["-1B","-0.5B","0.5B"],wl:["VR","AR","元宇宙","5G","工業訓練"]},
+  {id:"4904",name:"遠傳",ex:"tse",desc:"台灣第二大電信業者，5G網路覆蓋率持續提升，布局企業5G專網、智慧工廠、AIoT服務。",up:"Nokia、Ericsson",mid:"遠傳（電信業者）",dn:"個人/企業用戶",clients:"個人消費者、企業用戶",suppliers:"Nokia、Ericsson",pe:"20.0",pb:"1.8",ps:"0.8",ev:"8.0",rev:["102B","98B","95B"],np:["8B","7.5B","7B"],wl:["5G","AIoT","企業專網","智慧工廠","電信"]}
+]},
 "電動車/汽車電子":{ stocks:[
   {id:"6770",name:"力智",ex:"tse",desc:"電動車與儲能MOSFET、GaN元件IC設計，台灣電動車半導體新興供應商。",up:"台積電",mid:"力智（IC設計）",dn:"Tesla、BYD",clients:"Tesla、BYD、整車廠",suppliers:"台積電",pe:"28.0",pb:"4.5",ps:"5.2",ev:"21.0",rev:["12B","9B","6B"],np:["2B","1B","0.8B"],wl:["電動車","GaN","MOSFET","碳化矽","Tesla"]},
   {id:"2207",name:"和泰車",ex:"tse",desc:"Toyota台灣總代理，市占率長期居第一，積極引進Lexus電動車與PHEV。",up:"Toyota",mid:"和泰車（汽車經銷）",dn:"台灣消費者",clients:"台灣個人消費者",suppliers:"Toyota、Lexus",pe:"15.4",pb:"3.2",ps:"0.8",ev:"11.2",rev:["173B","162B","148B"],np:["13B","12B","10B"],wl:["Toyota","電動車","PHEV","Lexus"]},
@@ -302,6 +341,98 @@ Object.entries(SECTORS).forEach(([sec,d])=>d.stocks.forEach(s=>{
 }));
 
 const prices={};
+let historyData={};  // 5年歷史資料
+let historyLoaded=false;
+
+// ── 載入 history.json ──
+async function loadHistory(){
+  try{
+    const r=await fetch('history.json?_='+Date.now());
+    if(!r.ok) throw new Error('http '+r.status);
+    historyData=await r.json();
+    historyLoaded=true;
+    console.log('history loaded:',historyData._count,'stocks');
+  }catch(e){
+    console.warn('history not available:',e);
+    historyLoaded=false;
+  }
+}
+
+// ── 計算均線 ──
+function calcMA(pricesObj, days){
+  if(!pricesObj) return null;
+  const sorted=Object.keys(pricesObj).sort();
+  if(sorted.length < days) return null;
+  const recent=sorted.slice(-days);
+  const sum=recent.reduce((a,d)=>a+(pricesObj[d]||0),0);
+  return Math.round(sum/days*100)/100;
+}
+
+// ── 偵測均線交叉 ──
+function detectCross(pricesObj){
+  if(!pricesObj) return 'none';
+  const sorted=Object.keys(pricesObj).sort();
+  if(sorted.length < 125) return 'none';
+
+  // 計算今天和昨天的各均線
+  const calc=(arr,n)=>{
+    const s=arr.slice(-n);
+    return s.reduce((a,d)=>a+(pricesObj[d]||0),0)/n;
+  };
+  const prev=sorted.slice(0,-1);
+
+  const ma5=calc(sorted,5),   ma5p=calc(prev,5);
+  const ma20=calc(sorted,20),  ma20p=calc(prev,20);
+  const ma60=calc(sorted,60),  ma60p=calc(prev,60);
+  const ma120=calc(sorted,120),ma120p=calc(prev,120);
+
+  // 近期交叉（最近5天內）
+  const last5=sorted.slice(-5);
+  let result='none';
+
+  // 黃金交叉：短線由下往上穿越長線
+  if(ma5>ma20 && ma5p<=ma20p) result='gc-s';
+  else if(ma5<ma20 && ma5p>=ma20p) result='dc-s';
+  else if(ma20>ma60 && ma20p<=ma60p) result='gc-m';
+  else if(ma20<ma60 && ma20p>=ma60p) result='dc-m';
+  else if(ma60>ma120 && ma60p<=ma120p) result='gc-l';
+  else if(ma60<ma120 && ma60p>=ma120p) result='dc-l';
+  // 接近交叉（差距在0.5%以內）
+  else if(Math.abs(ma5-ma20)/ma20<0.005) result=ma5>ma20?'near-gc':'near-dc';
+  else if(Math.abs(ma20-ma60)/ma60<0.005) result=ma20>ma60?'near-gc':'near-dc';
+
+  return result;
+}
+
+// ── 計算歷史P/E（用於河流圖）──
+function calcPEHistory(sid){
+  const h=historyData[sid];
+  if(!h||!h.prices||!h.eps) return null;
+  const sorted=Object.keys(h.prices).sort();
+  if(sorted.length<20) return null;
+
+  // 計算每個日期點的P/E
+  const pePoints=[];
+  sorted.forEach(date=>{
+    const price=h.prices[date];
+    // 找最近4季EPS總和（TTM EPS）
+    const year=parseInt(date.split('-')[0]);
+    const month=parseInt(date.split('-')[1]);
+    const q=Math.ceil(month/3);
+    let ttmEps=0;
+    let count=0;
+    for(let i=0;i<4;i++){
+      let tq=q-i; let ty=year;
+      if(tq<=0){tq+=4;ty--;}
+      const key=`${ty}Q${tq}`;
+      if(h.eps[key]!==undefined){ttmEps+=h.eps[key];count++;}
+    }
+    if(count>=2&&ttmEps>0){
+      pePoints.push({date,pe:Math.round(price/ttmEps*10)/10});
+    }
+  });
+  return pePoints.length>=10?pePoints:null;
+}
 const maData={};
 let currentSector=Object.keys(SECTORS)[0];
 let currentSort="default";
@@ -321,42 +452,112 @@ function maCls(st){
 }
 
 // ── RIVER CHART ──
-function drawRiver(canvas,pe){
+function drawRiver(canvas, pe, sid){
   const ctx=canvas.getContext('2d');
   const W=canvas.width=canvas.offsetWidth||460;
   const H=canvas.height=canvas.offsetHeight||150;
   ctx.clearRect(0,0,W,H);
   const pad={l:30,r:8,t:6,b:20};
   const cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
-  const maxPE=42;
-  const bands=[{pe:8,c:'rgba(42,122,80,0.2)',lbl:'嚴重低估'},{pe:13,c:'rgba(42,122,80,0.12)',lbl:'低估'},{pe:18,c:'rgba(191,161,74,0.1)',lbl:'合理偏低'},{pe:23,c:'rgba(193,127,62,0.1)',lbl:'合理'},{pe:30,c:'rgba(184,48,48,0.1)',lbl:'偏高'},{pe:42,c:'rgba(184,48,48,0.18)',lbl:'高估'}];
-  const pyY=p=>pad.t+ch*(1-Math.min(p,maxPE)/maxPE);
-  const pyX=i=>pad.l+(i/11)*cw;
-  for(let i=0;i<bands.length-1;i++){
-    const y1=pyY(bands[i+1].pe),y2=pyY(bands[i].pe);
-    ctx.fillStyle=bands[i].c;ctx.fillRect(pad.l,y1,cw,y2-y1);
-    ctx.fillStyle='rgba(100,80,50,0.4)';ctx.font='8.5px sans-serif';
-    ctx.fillText(bands[i].lbl,pad.l+3,y2-2);
+
+  // 嘗試用真實PE資料，否則fallback模擬
+  const realPE = sid ? calcPEHistory(sid) : null;
+  const isReal = realPE && realPE.length >= 10;
+
+  // 動態決定PE範圍
+  let allPE = isReal ? realPE.map(p=>p.pe) : [];
+  const pe0 = parseFloat(pe)||18;
+  allPE.push(pe0);
+  const minPE = Math.max(1, Math.floor(Math.min(...allPE)*0.85));
+  const maxPE = Math.ceil(Math.max(...allPE)*1.15);
+
+  // 動態色帶（依實際資料的25/50/75百分位切分）
+  let p25,p50,p75;
+  if(isReal && allPE.length>=4){
+    const sorted=[...allPE].sort((a,b)=>a-b);
+    p25=sorted[Math.floor(sorted.length*0.25)];
+    p50=sorted[Math.floor(sorted.length*0.5)];
+    p75=sorted[Math.floor(sorted.length*0.75)];
+  } else {
+    p25=pe0*0.7; p50=pe0*0.9; p75=pe0*1.1;
   }
-  const pe0=parseFloat(pe)||18;
-  const hist=[];let v=pe0*(0.75+Math.random()*0.4);
-  for(let i=0;i<12;i++){v=Math.max(5,Math.min(40,v+(Math.random()-0.48)*2.5));hist.push(v);}
-  hist[11]=pe0;
-  ctx.beginPath();ctx.strokeStyle='rgba(193,127,62,0.9)';ctx.lineWidth=2;
-  hist.forEach((p,i)=>{const x=pyX(i),y=pyY(p);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
-  ctx.stroke();
-  const cx=pyX(11),cy=pyY(pe0);
-  ctx.beginPath();ctx.arc(cx,cy,4.5,0,Math.PI*2);ctx.fillStyle='rgba(193,127,62,1)';ctx.fill();
-  ctx.fillStyle='#2C2416';ctx.font='bold 9.5px sans-serif';ctx.fillText('P/E '+pe0,cx-16,cy-7);
+
+  const bands=[
+    {pe:minPE, c:'rgba(42,122,80,0.22)',  lbl:'低估'},
+    {pe:p25,   c:'rgba(42,122,80,0.1)',   lbl:'合理偏低'},
+    {pe:p50,   c:'rgba(191,161,74,0.1)',  lbl:'合理'},
+    {pe:p75,   c:'rgba(184,48,48,0.1)',   lbl:'偏高'},
+    {pe:maxPE, c:'rgba(184,48,48,0.2)',   lbl:'高估'},
+  ];
+
+  const pyY=p=>pad.t+ch*(1-(p-minPE)/(maxPE-minPE));
+  const pyX=(i,total)=>pad.l+(i/(total-1))*cw;
+
+  // 畫色帶
+  for(let i=0;i<bands.length-1;i++){
+    const y1=pyY(bands[i+1].pe), y2=pyY(bands[i].pe);
+    ctx.fillStyle=bands[i].c;
+    ctx.fillRect(pad.l,Math.min(y1,y2),cw,Math.abs(y2-y1));
+    ctx.fillStyle='rgba(100,80,50,0.45)';ctx.font='8.5px sans-serif';
+    ctx.fillText(bands[i].lbl,pad.l+3,Math.max(y1,y2)-3);
+  }
+
+  // 畫PE曲線
+  let points=[];
+  if(isReal){
+    // 真實資料：取每月最後一筆，最多60個點
+    const byMonth={};
+    realPE.forEach(p=>{
+      const m=p.date.substring(0,7);
+      byMonth[m]=p;
+    });
+    const months=Object.keys(byMonth).sort();
+    points=months.map(m=>byMonth[m].pe);
+  } else {
+    // 模擬資料
+    let v=pe0*(0.75+Math.random()*0.4);
+    for(let i=0;i<24;i++){v=Math.max(minPE+1,Math.min(maxPE-1,v+(Math.random()-0.48)*1.5));points.push(v);}
+    points.push(pe0);
+  }
+
+  if(points.length>=2){
+    ctx.beginPath();
+    ctx.strokeStyle='rgba(193,127,62,0.9)';ctx.lineWidth=2;
+    points.forEach((p,i)=>{
+      const x=pyX(i,points.length), y=pyY(Math.max(minPE,Math.min(maxPE,p)));
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+  }
+
+  // 當前PE點
+  const cx=pyX(points.length-1,points.length), cy=pyY(Math.max(minPE,Math.min(maxPE,pe0)));
+  ctx.beginPath();ctx.arc(cx,cy,4.5,0,Math.PI*2);
+  ctx.fillStyle='rgba(193,127,62,1)';ctx.fill();
+  ctx.fillStyle='#2C2416';ctx.font='bold 9.5px sans-serif';
+  ctx.fillText('P/E '+pe0,cx-18,cy-7);
+
+  // X軸年份標籤
   const yr=new Date().getFullYear();
   ctx.fillStyle='rgba(155,139,120,0.75)';ctx.font='8.5px sans-serif';
-  [0,2,4,6,8,10,11].forEach(i=>ctx.fillText(String(yr-11+i),pyX(i)-8,H-4));
-  [10,15,20,25,30,35].forEach(p=>{
+  const labelYears=isReal?5:3;
+  for(let i=0;i<=labelYears;i++){
+    const x=pad.l+(i/labelYears)*cw;
+    ctx.fillText(String(yr-labelYears+i),x-8,H-4);
+  }
+
+  // Y軸網格
+  const step=Math.ceil((maxPE-minPE)/5);
+  for(let p=Math.ceil(minPE/step)*step;p<=maxPE;p+=step){
     const y=pyY(p);
     ctx.strokeStyle='rgba(155,139,120,0.15)';ctx.lineWidth=0.5;
     ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
     ctx.fillStyle='rgba(155,139,120,0.7)';ctx.font='8px sans-serif';ctx.fillText(p,2,y+3);
-  });
+  }
+
+  // 標示是否為真實資料
+  ctx.fillStyle='rgba(155,139,120,0.6)';ctx.font='8px sans-serif';
+  ctx.fillText(isReal?'● 真實歷史P/E':'● 示意資料',pad.l+3,pad.t+10);
 }
 
 // ── NAV ──
@@ -426,12 +627,22 @@ function openPanel(s,sectorName){
     priceSec=`<div class="big-price-row"><div class="big-price">${p.price.toFixed(2)}</div><span class="big-chg ${cls}">${sign}${p.pct.toFixed(2)}%</span><span class="big-chg ${cls}">${sign}${p.change.toFixed(2)}</span></div>
     <div class="price-detail-row"><span>整張 NT$${Math.round(p.price*1000).toLocaleString()}</span><span>零股 NT$${p.price.toFixed(2)}</span>${p.prevClose?`<span>昨收 ${p.prevClose.toFixed(2)}</span>`:''}</div>`;
   }
-  const maSt=maData[s.id]||'none';
   const pe0=parseFloat(s.pe)||18;
+  // 用真實歷史資料計算均線
+  const hd=historyData[s.id];
+  const hp=hd?hd.prices:null;
+  const realMA5  = calcMA(hp,5);
+  const realMA20 = calcMA(hp,20);
+  const realMA60 = calcMA(hp,60);
+  const realMA120= calcMA(hp,120);
+  const realCross= hp?detectCross(hp):(maData[s.id]||'none');
+  const maSt = realCross;
+  const isRealMA = realMA5!==null;
+  const fmt=v=>v!==null?v.toFixed(2):'—';
   const pairs=[
-    {lbl:'5日 × 20日',st:['gc-s','dc-s','near-gc','near-dc'].includes(maSt)?maSt:'none'},
-    {lbl:'20日 × 60日',st:['gc-m','dc-m'].includes(maSt)?maSt:'none'},
-    {lbl:'60日 × 120日',st:['gc-l','dc-l'].includes(maSt)?maSt:'none'},
+    {lbl:'5日 × 20日',  st:['gc-s','dc-s','near-gc','near-dc'].includes(maSt)?maSt:'none', ma1:fmt(realMA5),  ma2:fmt(realMA20)},
+    {lbl:'20日 × 60日', st:['gc-m','dc-m'].includes(maSt)?maSt:'none',                     ma1:fmt(realMA20), ma2:fmt(realMA60)},
+    {lbl:'60日 × 120日',st:['gc-l','dc-l'].includes(maSt)?maSt:'none',                     ma1:fmt(realMA60), ma2:fmt(realMA120)},
   ];
   const stL={'gc-s':'黃金交叉','dc-s':'死亡交叉','gc-m':'黃金交叉','dc-m':'死亡交叉','gc-l':'黃金交叉','dc-l':'死亡交叉','near-gc':'接近金叉','near-dc':'接近死叉','none':'無交叉'};
   const stC={'gc-s':'badge-gc-s','dc-s':'badge-dc-s','gc-m':'badge-gc-m','dc-m':'badge-dc-m','gc-l':'badge-gc-l','dc-l':'badge-dc-l','near-gc':'badge-near-gc','near-dc':'badge-near-dc','none':''};
@@ -450,7 +661,7 @@ function openPanel(s,sectorName){
         <div class="rl-item"><div class="rl-dot" style="background:rgba(184,48,48,0.4)"></div><span style="color:var(--text3)">高估區</span></div>
         <div class="rl-item"><div class="rl-dot" style="background:rgba(193,127,62,0.9);height:3px;width:16px;border-radius:1px;margin-top:3px"></div><span style="color:var(--text3)">歷史P/E</span></div>
       </div>
-      <div class="notice">⚠️ 河流圖為示意，正式版將串接歷史EPS計算真實本益比帶。</div>
+      <div class="notice">${historyLoaded?"✅ 真實歷史P/E資料（5年）":"⚠️ history.json 尚未載入，顯示示意圖"}</div>
     </div>
     <div class="psec">
       <div class="psec-title">均線交叉訊號</div>
@@ -462,7 +673,7 @@ function openPanel(s,sectorName){
           return `<tr><td>${pair.lbl}</td><td>${ma1}</td><td>${ma2}</td><td><span class="cross-tag ${stC[pair.st]}">${stL[pair.st]}</span></td></tr>`;
         }).join('')}
       </table>
-      <div class="notice">⚠️ 均線為示意，正式版將串接歷史收盤計算真實MA值。</div>
+      <div class="notice" id="maNotice">${isRealMA?"✅ 真實歷史收盤計算（5年資料）":"⚠️ history.json 尚未載入，顯示示意值"}</div>
     </div>
     <div class="psec"><div class="psec-title">估值指標</div>
       <div class="mets-grid">
@@ -497,7 +708,7 @@ function openPanel(s,sectorName){
 
   document.getElementById('panel').classList.add('open');
   document.getElementById('overlay').classList.add('show');
-  setTimeout(()=>{const c=document.getElementById('riverCanvas');if(c)drawRiver(c,s.pe);},100);
+  setTimeout(()=>{const c=document.getElementById('riverCanvas');if(c)drawRiver(c,s.pe,s.id);},100);
 }
 function closePanel(){
   document.getElementById('panel').classList.remove('open');
@@ -567,6 +778,16 @@ function updateClock(){
 }
 function initMA(){
   allStocks.forEach(s=>{maData[s.id]=simulateMA(s.id);});
+  updateMABadges();
+}
+function updateMABadges(){
+  // 若有真實資料，用真實交叉取代模擬值
+  if(historyLoaded){
+    allStocks.forEach(s=>{
+      const h=historyData[s.id];
+      if(h&&h.prices) maData[s.id]=detectCross(h.prices);
+    });
+  }
   const gc=allStocks.filter(s=>['gc-s','gc-m','gc-l'].includes(maData[s.id])).length;
   const dc=allStocks.filter(s=>['dc-s','dc-m','dc-l'].includes(maData[s.id])).length;
   document.getElementById('gcCnt').textContent=gc;
@@ -578,6 +799,11 @@ initMA();
 buildNav();
 renderGrid();
 fetchPrices();
+// 載入歷史資料（背景執行，完成後更新均線標籤）
+loadHistory().then(()=>{
+  updateMABadges();
+  renderGrid();
+});
 setInterval(fetchPrices,60000);
 setInterval(updateClock,1000);
 updateClock();
