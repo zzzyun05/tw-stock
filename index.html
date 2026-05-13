@@ -24,11 +24,7 @@ html,body{height:100%;overflow:hidden}
 body{background:var(--cream);color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:14px}
 
 /* ── SETUP BANNER ── */
-.setup-banner{background:#FFF8E1;border-bottom:1px solid #F0D060;padding:8px 16px;display:flex;align-items:center;gap:10px;font-size:12px;color:#7A5C00;position:fixed;top:0;left:0;right:0;z-index:500}
-.setup-banner.hidden{display:none}
-.setup-banner input{flex:1;max-width:320px;padding:4px 10px;border:1px solid #D4B840;border-radius:4px;font-size:12px;font-family:'Noto Sans TC',sans-serif;background:#fff;color:#333}
-.setup-btn{padding:4px 12px;background:var(--accent);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-family:'Noto Sans TC',sans-serif}
-.setup-skip{color:var(--text4);cursor:pointer;font-size:11px;text-decoration:underline}
+
 
 .header{background:var(--cream);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:12px;position:fixed;left:0;right:0;z-index:200;height:56px}
 .header.with-banner{top:38px}
@@ -173,16 +169,7 @@ body{background:var(--cream);color:var(--text);font-family:'Noto Sans TC',sans-s
 </head>
 <body>
 
-<!-- SETUP BANNER -->
-<div class="setup-banner" id="setupBanner">
-  <span>📡</span>
-  <span>輸入 Fugle API Key 以啟用即時報價（免費申請：developer.fugle.tw）</span>
-  <input type="text" id="fugleKeyInput" placeholder="貼上你的 API Key…" />
-  <button class="setup-btn" onclick="saveKey()">儲存</button>
-  <span class="setup-skip" onclick="dismissBanner()">暫時跳過</span>
-</div>
-
-<div class="header with-banner" id="header">
+<div class="header no-banner" id="header">
   <div class="logo">
     <div class="logo-mark">台</div>
     <div><div class="logo-text">台股研究站</div><div class="logo-sub">v2 · 8 產業</div></div>
@@ -195,7 +182,7 @@ body{background:var(--cream);color:var(--text);font-family:'Noto Sans TC',sans-s
   <div class="clock" id="clock"></div>
 </div>
 
-<div class="mbar with-banner" id="mbar">
+<div class="mbar no-banner" id="mbar">
   <div class="mitem"><span class="ml">已載入</span><span class="mv" id="loadedCnt">—</span></div>
   <div class="mitem"><span class="ml">上漲</span><span class="mv up" id="upCnt">—</span></div>
   <div class="mitem"><span class="ml">下跌</span><span class="mv dn" id="dnCnt">—</span></div>
@@ -205,7 +192,7 @@ body{background:var(--cream);color:var(--text);font-family:'Noto Sans TC',sans-s
   <div class="mitem"><span class="ml" id="updateLbl" style="color:var(--text4)">等待報價…</span></div>
 </div>
 
-<div class="layout with-banner" id="layout">
+<div class="layout no-banner" id="layout">
   <div class="sidebar" id="sidebar"></div>
   <div class="content">
     <div class="mob-tabs" id="mobTabs"></div>
@@ -318,30 +305,9 @@ const prices={};
 const maData={};
 let currentSector=Object.keys(SECTORS)[0];
 let currentSort="default";
-let fugleKey=localStorage.getItem('fugle_key')||'';
-let hasBanner=true;
 
-// ── BANNER / KEY SETUP ──
-function initBanner(){
-  if(fugleKey){
-    dismissBanner();
-  }
-}
-function saveKey(){
-  const v=document.getElementById('fugleKeyInput').value.trim();
-  if(!v){alert('請輸入 API Key');return;}
-  fugleKey=v;
-  localStorage.setItem('fugle_key',v);
-  dismissBanner();
-  fetchPrices();
-}
-function dismissBanner(){
-  hasBanner=false;
-  document.getElementById('setupBanner').classList.add('hidden');
-  document.getElementById('header').className='header no-banner';
-  document.getElementById('mbar').className='mbar no-banner';
-  document.getElementById('layout').className='layout no-banner';
-}
+
+
 
 // ── MA ──
 function simulateMA(id){
@@ -451,9 +417,9 @@ function openPanel(s,sectorName){
   const sector=sectorName||s.sector||'—';
   let priceSec='';
   if(!p){
-    const keyMsg=fugleKey?'報價載入中…':'請先設定 API Key 以顯示報價';
+    const keyMsg='報價載入中…';
     priceSec=`<div style="font-size:13px;color:var(--text3);padding:4px 0">${keyMsg}</div>
-    ${!fugleKey?`<div class="price-note">💡 申請免費 Fugle API Key：<a href="https://developer.fugle.tw" target="_blank" style="color:var(--accent)">developer.fugle.tw</a>，申請後在頁面頂部輸入 Key 即可啟用報價。</div>`:''}`;
+    `;
   } else {
     const cls=p.change>0?'up':p.change<0?'dn':'nt';
     const sign=p.change>0?'+':'';
@@ -474,7 +440,7 @@ function openPanel(s,sectorName){
   document.getElementById('pSec').textContent='· '+sector;
   document.getElementById('pName').textContent=s.name;
   document.getElementById('pBody').innerHTML=`
-    <div class="psec"><div class="psec-title"><span>即時報價</span><span style="font-size:9px;color:var(--text4);text-transform:none;letter-spacing:0;font-weight:400">Fugle API · 盤中即時</span></div>${priceSec}</div>
+    <div class="psec"><div class="psec-title"><span>即時報價</span><span style="font-size:9px;color:var(--text4);text-transform:none;letter-spacing:0;font-weight:400">每5分鐘更新</span></div>${priceSec}</div>
     <div class="psec">
       <div class="psec-title">P/E 河流圖（歷史估值區間）</div>
       <div class="river-wrap"><canvas class="river-canvas" id="riverCanvas"></canvas></div>
@@ -561,47 +527,36 @@ function selectStock(id,sec){
   if(s)setTimeout(()=>openPanel(s,sec),80);
 }
 
-// ── FETCH PRICES via Fugle REST API ──
+// ── FETCH PRICES from prices.json (updated by GitHub Actions) ──
 async function fetchPrices(){
-  if(!fugleKey){document.getElementById('updateLbl').textContent='請設定 API Key 啟用報價';return;}
-  const uniqueIds=[...new Map(allStocks.map(s=>[s.id,s])).values()];
-  let loaded=0,up=0,dn=0,flat=0;
-  // Fugle intraday quote: GET /intraday/quote/{symbol}
-  // Free tier: 60 req/min → batch sequentially with small delay
-  const chunks=[];
-  for(let i=0;i<uniqueIds.length;i+=10) chunks.push(uniqueIds.slice(i,i+10));
-  for(const chunk of chunks){
-    await Promise.allSettled(chunk.map(async s=>{
-      try{
-        const sym=s.ex==='otc'?s.id+'O':s.id; // Fugle format
-        const url=`https://api.fugle.tw/marketdata/v1.0/stock/intraday/quote/${sym}`;
-        const r=await fetch(url,{headers:{'X-API-KEY':fugleKey}});
-        if(!r.ok)return;
-        const d=await r.json();
-        if(d.closePrice||d.lastPrice){
-          const price=d.closePrice||d.lastPrice||0;
-          const prevClose=d.previousClose||d.referencePrice||0;
-          const change=price-prevClose;
-          const pct=prevClose?(change/prevClose)*100:0;
-          prices[s.id]={price,change,pct,prevClose};
-          loaded++;
-          if(change>0)up++;else if(change<0)dn++;else flat++;
-        }
-      }catch(e){}
-    }));
-    await new Promise(r=>setTimeout(r,200)); // rate limit
-  }
-  renderGrid();
-  const now=new Date();
-  const pad=n=>String(n).padStart(2,'0');
-  if(loaded>0){
-    document.getElementById('updateLbl').textContent=`更新 ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+  try{
+    const url = 'prices.json?_='+Date.now();
+    const r = await fetch(url);
+    if(!r.ok) throw new Error('http '+r.status);
+    const d = await r.json();
+    let loaded=0,up=0,dn=0,flat=0;
+    Object.entries(d).forEach(([id,v])=>{
+      if(id.startsWith('_')) return;
+      prices[id]={price:v.price,change:v.change,pct:v.pct,prevClose:v.prevClose};
+      loaded++;
+      if(v.change>0)up++;else if(v.change<0)dn++;else flat++;
+    });
+    renderGrid();
+    const pad=n=>String(n).padStart(2,'0');
+    if(d._updated){
+      const t=new Date(d._updated*1000);
+      document.getElementById('updateLbl').textContent=
+        loaded>0
+          ? `資料時間 ${pad(t.getHours())}:${pad(t.getMinutes())}:${pad(t.getSeconds())}（每5分鐘更新）`
+          : '非交易時間，顯示最後收盤價';
+    }
     document.getElementById('loadedCnt').textContent=loaded;
     document.getElementById('upCnt').textContent=up;
     document.getElementById('dnCnt').textContent=dn;
-    document.getElementById('flatCnt').textContent=flat;
-  } else {
-    document.getElementById('updateLbl').textContent='API Key 無效或報價暫時無法載入';
+    document.getElementById('flatCnt').textContent=Math.max(0,loaded-up-dn);
+  }catch(e){
+    document.getElementById('updateLbl').textContent='報價讀取失敗，請稍後再試';
+    console.error('price fetch error:',e);
   }
 }
 
@@ -619,7 +574,6 @@ function initMA(){
 }
 
 // ── INIT ──
-initBanner();
 initMA();
 buildNav();
 renderGrid();
