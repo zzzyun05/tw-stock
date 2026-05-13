@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>台股研究站</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600&family=Noto+Sans+TC:wght@300;400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --cream:#FAF8F3;--cream2:#F4F1E8;--cream3:#EAE5D8;--cream4:#DDD8C8;
+  --text:#2C2416;--text2:#5C4E3A;--text3:#9B8B78;--text4:#B8A898;
+  --accent:#C17F3E;--accent2:#E8A85A;
+  --green:#2A7A50;--green2:#EAF5EE;
+  --red:#B83030;--red2:#FDECEA;
+  --blue:#3A6FA8;--blue2:#E8F0FA;
+  --gold:#BFA14A;
+  --border:#DDD8C8;--border2:#EAE5D8;--border3:#F0EDE4;
+  --radius:12px;--radius-sm:8px;--radius-xs:5px;
+  --shadow:0 2px 12px rgba(44,36,22,0.08);
+  --shadow-lg:0 8px 32px rgba(44,36,22,0.12);
+}
+html,body{height:100%;overflow:hidden}
+body{background:var(--cream);color:var(--text);font-family:'Noto Sans TC',sans-serif;font-size:14px}
+
+/* ── SETUP BANNER ── */
+.setup-banner{background:#FFF8E1;border-bottom:1px solid #F0D060;padding:8px 16px;display:flex;align-items:center;gap:10px;font-size:12px;color:#7A5C00;position:fixed;top:0;left:0;right:0;z-index:500}
+.setup-banner.hidden{display:none}
+.setup-banner input{flex:1;max-width:320px;padding:4px 10px;border:1px solid #D4B840;border-radius:4px;font-size:12px;font-family:'Noto Sans TC',sans-serif;background:#fff;color:#333}
+.setup-btn{padding:4px 12px;background:var(--accent);color:#fff;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-family:'Noto Sans TC',sans-serif}
+.setup-skip{color:var(--text4);cursor:pointer;font-size:11px;text-decoration:underline}
+
+.header{background:var(--cream);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:12px;position:fixed;left:0;right:0;z-index:200;height:56px}
+.header.with-banner{top:38px}
+.header.no-banner{top:0}
+.logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.logo-mark{width:34px;height:34px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Noto Serif TC',serif;font-weight:600;font-size:15px}
+.logo-text{font-family:'Noto Serif TC',serif;font-size:15px;font-weight:600;color:var(--text);white-space:nowrap}
+.logo-sub{font-size:10px;color:var(--text4);margin-top:1px}
+.search-wrap{flex:1;max-width:400px;position:relative}
+.search-input{width:100%;padding:7px 12px 7px 34px;border:1.5px solid var(--border);border-radius:20px;background:var(--cream2);font-size:13px;color:var(--text);outline:none;transition:all 0.15s;font-family:'Noto Sans TC',sans-serif}
+.search-input:focus{border-color:var(--accent2);background:#fff}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text4);font-size:15px}
+.search-drop{position:absolute;top:calc(100%+6px);left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-lg);z-index:300;max-height:300px;overflow-y:auto;display:none}
+.search-drop.show{display:block}
+.sdrop-item{padding:9px 14px;cursor:pointer;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border3)}
+.sdrop-item:last-child{border-bottom:none}
+.sdrop-item:hover{background:var(--cream)}
+.sdrop-id{font-size:12px;font-weight:500;color:var(--accent);min-width:36px}
+.sdrop-name{font-size:13px;color:var(--text)}
+.sdrop-sec{font-size:10px;color:var(--text4);margin-left:auto;white-space:nowrap}
+.clock{font-size:11px;color:var(--text4);text-align:right;white-space:nowrap;flex-shrink:0;display:none}
+@media(min-width:600px){.clock{display:block}}
+
+.mbar{position:fixed;left:0;right:0;z-index:190;background:var(--cream2);border-bottom:1px solid var(--border2);padding:5px 16px;display:flex;gap:20px;overflow-x:auto;scrollbar-width:none;font-size:11.5px;height:30px;align-items:center}
+.mbar.with-banner{top:94px}
+.mbar.no-banner{top:56px}
+.mbar::-webkit-scrollbar{display:none}
+.mitem{display:flex;align-items:center;gap:5px;white-space:nowrap}
+.ml{color:var(--text4)}.mv{font-weight:500;color:var(--text)}
+.mc{font-size:11px;padding:1px 5px;border-radius:3px;font-weight:500}
+.up{color:var(--green);background:var(--green2)}.dn{color:var(--red);background:var(--red2)}.nt{color:var(--text3)}
+
+.layout{display:flex;position:fixed;left:0;right:0;bottom:0}
+.layout.with-banner{top:124px}
+.layout.no-banner{top:86px}
+.sidebar{width:190px;min-width:190px;border-right:1px solid var(--border2);background:var(--cream);overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+@media(max-width:700px){.sidebar{display:none}}
+.sb-head{padding:12px 14px 6px;font-size:10px;font-weight:500;color:var(--text4);letter-spacing:1.2px;text-transform:uppercase}
+.sb-btn{width:100%;text-align:left;padding:8px 14px;border:none;background:none;cursor:pointer;font-size:12.5px;color:var(--text2);display:flex;align-items:center;justify-content:space-between;transition:all 0.12s;font-family:'Noto Sans TC',sans-serif;border-left:2px solid transparent}
+.sb-btn:hover{background:var(--cream2)}
+.sb-btn.active{background:var(--cream3);color:var(--accent);font-weight:500;border-left-color:var(--accent)}
+.sb-cnt{font-size:10px;background:var(--cream3);color:var(--text4);padding:1px 6px;border-radius:8px}
+.sb-btn.active .sb-cnt{background:var(--accent2);color:#fff}
+
+.content{flex:1;overflow-y:auto;overflow-x:hidden;padding:16px}
+.mob-tabs{display:none;overflow-x:auto;scrollbar-width:none;gap:6px;padding:0 0 10px}
+.mob-tabs::-webkit-scrollbar{display:none}
+@media(max-width:700px){.mob-tabs{display:flex}}
+.mob-tab{flex-shrink:0;padding:6px 12px;border:1px solid var(--border);border-radius:16px;background:var(--cream);font-size:12px;color:var(--text2);cursor:pointer;white-space:nowrap;transition:all 0.12s;font-family:'Noto Sans TC',sans-serif}
+.mob-tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.view-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
+.view-title{font-family:'Noto Serif TC',serif;font-size:17px;font-weight:600;color:var(--text)}
+.view-cnt{font-size:12px;color:var(--text4);background:var(--cream3);padding:2px 8px;border-radius:10px}
+.sort-bar{display:flex;gap:6px;margin-bottom:14px;align-items:center;flex-wrap:wrap}
+.sort-lbl{font-size:11px;color:var(--text4)}
+.sort-btn{padding:4px 10px;border:1px solid var(--border);border-radius:var(--radius-xs);background:var(--cream);font-size:11.5px;color:var(--text3);cursor:pointer;transition:all 0.12s;font-family:'Noto Sans TC',sans-serif}
+.sort-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+.stock-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+@media(max-width:480px){.stock-grid{grid-template-columns:1fr}}
+.stock-card{background:#fff;border:1px solid var(--border2);border-radius:var(--radius);padding:13px 14px;cursor:pointer;transition:all 0.15s}
+.stock-card:hover{border-color:var(--accent2);box-shadow:var(--shadow);transform:translateY(-1px)}
+.card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px}
+.card-id{font-size:12px;font-weight:500;color:var(--accent);font-family:'Noto Serif TC',serif}
+.card-badges{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.badge{font-size:10px;padding:2px 6px;border-radius:8px;font-weight:500;white-space:nowrap}
+.badge-sec{background:var(--cream2);color:var(--text3)}
+.badge-gc-s{background:#FFF8E1;color:#B8860B;border:1px solid #F0D060}
+.badge-dc-s{background:var(--red2);color:var(--red);border:1px solid #FFAAAA}
+.badge-gc-m{background:var(--green2);color:var(--green);border:1px solid #A8D8B0}
+.badge-dc-m{background:#F9E8FF;color:#7B3FC4;border:1px solid #CCA8E8}
+.badge-gc-l{background:var(--blue2);color:var(--blue);border:1px solid #90CAF9}
+.badge-dc-l{background:#FBE9E7;color:#BF360C;border:1px solid #FFAB91}
+.badge-near-gc{background:#FFFDE7;color:#F57F17;border:1px solid #FFE082}
+.badge-near-dc{background:#FCE4EC;color:#880E4F;border:1px solid #F48FB1}
+.card-name{font-size:14.5px;font-weight:500;color:var(--text);margin-bottom:3px;font-family:'Noto Serif TC',serif}
+.card-desc{font-size:11.5px;color:var(--text3);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-footer{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:8px;border-top:1px solid var(--border3)}
+.price-main{font-size:17px;font-weight:500;color:var(--text);font-family:'Noto Serif TC',serif;line-height:1.2}
+.price-sub{font-size:10.5px;color:var(--text4);margin-top:2px}
+.price-chg{font-size:12px;padding:3px 7px;border-radius:var(--radius-xs);font-weight:500}
+.loading-pulse{display:inline-flex;gap:3px;align-items:center;padding:2px 0}
+.dot{width:5px;height:5px;border-radius:50%;background:var(--accent2);animation:dp 1.2s infinite}
+.dot:nth-child(2){animation-delay:.2s}.dot:nth-child(3){animation-delay:.4s}
+@keyframes dp{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+.no-price{font-size:12px;color:var(--text4)}
+
+/* RIVER */
+.river-wrap{position:relative;height:155px;margin:8px 0 4px}
+.river-canvas{width:100%;height:100%}
+.river-legend{display:flex;gap:10px;flex-wrap:wrap;font-size:10.5px;margin-top:4px}
+.rl-item{display:flex;align-items:center;gap:4px}
+.rl-dot{width:10px;height:10px;border-radius:2px}
+
+/* PANEL */
+.overlay{position:fixed;inset:0;background:rgba(44,36,22,.2);z-index:400;opacity:0;pointer-events:none;transition:opacity .25s;backdrop-filter:blur(2px)}
+.overlay.show{opacity:1;pointer-events:auto}
+.panel{position:fixed;top:0;right:0;width:480px;max-width:100vw;height:100vh;background:#fff;border-left:1px solid var(--border);z-index:500;overflow-y:auto;transform:translateX(100%);transition:transform .28s cubic-bezier(.32,.72,0,1)}
+@media(max-width:500px){.panel{width:100vw;border-left:none;top:auto;bottom:0;height:92vh;transform:translateY(100%);border-radius:var(--radius) var(--radius) 0 0}}
+.panel.open{transform:translateX(0)}
+@media(max-width:500px){.panel.open{transform:translateY(0)}}
+.panel-head{padding:14px 16px;border-bottom:1px solid var(--border2);display:flex;align-items:flex-start;gap:10px;position:sticky;top:0;background:#fff;z-index:10}
+.close-btn{width:28px;height:28px;min-width:28px;border:none;background:var(--cream2);border-radius:50%;cursor:pointer;font-size:14px;color:var(--text2);display:flex;align-items:center;justify-content:center}
+.panel-id{font-size:12px;color:var(--accent);font-weight:500}
+.panel-sec-lbl{font-size:11px;color:var(--text4)}
+.panel-name{font-size:19px;font-weight:600;font-family:'Noto Serif TC',serif;color:var(--text)}
+.panel-body{padding:16px}
+.psec{margin-bottom:18px}
+.psec-title{font-size:10.5px;font-weight:500;color:var(--text4);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border3);display:flex;align-items:center;justify-content:space-between}
+.big-price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:4px}
+.big-price{font-size:30px;font-weight:600;font-family:'Noto Serif TC',serif;color:var(--text)}
+.big-chg{font-size:13px;padding:4px 8px;border-radius:var(--radius-xs);font-weight:500}
+.price-detail-row{display:flex;gap:16px;font-size:11.5px;color:var(--text3);flex-wrap:wrap}
+.mets-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.met-box{background:var(--cream);border-radius:var(--radius-sm);padding:9px 11px;border:1px solid var(--border3)}
+.met-lbl{font-size:10.5px;color:var(--text4);margin-bottom:3px}
+.met-val{font-size:15px;font-weight:500;color:var(--text);font-family:'Noto Serif TC',serif}
+.ma-table{width:100%;border-collapse:collapse;font-size:12px}
+.ma-table th{text-align:center;color:var(--text4);font-weight:400;padding:5px 6px;border-bottom:1px solid var(--border3);font-size:11px}
+.ma-table th:first-child{text-align:left}
+.ma-table td{text-align:center;padding:5px 6px;color:var(--text)}
+.ma-table td:first-child{text-align:left;color:var(--text2);font-weight:500}
+.ma-table tr:hover td{background:var(--cream)}
+.cross-tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:8px;font-weight:500;white-space:nowrap}
+.sc-wrap{display:flex;flex-direction:column;gap:7px}
+.sc-row{display:flex;gap:7px;align-items:flex-start}
+.sc-lbl{font-size:11px;font-weight:500;color:var(--accent);min-width:36px;padding-top:2px}
+.tags{display:flex;flex-wrap:wrap;gap:4px}
+.tag{font-size:11px;padding:2px 8px;border-radius:10px;background:var(--cream2);color:var(--text2);border:1px solid var(--border2)}
+.tag-self{background:var(--cream3);font-weight:500}
+.fin-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.fin-tbl th{text-align:right;color:var(--text4);font-weight:400;padding:4px 7px;border-bottom:1px solid var(--border3);font-size:11px}
+.fin-tbl th:first-child{text-align:left}
+.fin-tbl td{text-align:right;padding:4px 7px;color:var(--text)}
+.fin-tbl td:first-child{text-align:left;color:var(--text2)}
+.fin-tbl tr:hover td{background:var(--cream)}
+.wiki-tags{display:flex;flex-wrap:wrap;gap:5px}
+.wtag{font-size:11px;padding:3px 9px;border-radius:10px;background:var(--blue2);color:var(--blue);border:1px solid #C8DCEE}
+.notice{font-size:10.5px;color:var(--text4);margin-top:6px;line-height:1.6}
+.price-note{font-size:11px;color:var(--text4);background:var(--cream2);padding:8px 12px;border-radius:var(--radius-sm);line-height:1.6;margin-top:8px}
+</style>
+</head>
+<body>
+
+<!-- SETUP BANNER -->
+<div class="setup-banner" id="setupBanner">
+  <span>📡</span>
+  <span>輸入 Fugle API Key 以啟用即時報價（免費申請：developer.fugle.tw）</span>
+  <input type="text" id="fugleKeyInput" placeholder="貼上你的 API Key…" />
+  <button class="setup-btn" onclick="saveKey()">儲存</button>
+  <span class="setup-skip" onclick="dismissBanner()">暫時跳過</span>
+</div>
+
+<div class="header with-banner" id="header">
+  <div class="logo">
+    <div class="logo-mark">台</div>
+    <div><div class="logo-text">台股研究站</div><div class="logo-sub">v2 · 8 產業</div></div>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" id="searchInput" type="text" placeholder="股票代號或名稱…" autocomplete="off"/>
+    <div class="search-drop" id="searchDrop"></div>
+  </div>
+  <div class="clock" id="clock"></div>
+</div>
+
+<div class="mbar with-banner" id="mbar">
+  <div class="mitem"><span class="ml">已載入</span><span class="mv" id="loadedCnt">—</span></div>
+  <div class="mitem"><span class="ml">上漲</span><span class="mv up" id="upCnt">—</span></div>
+  <div class="mitem"><span class="ml">下跌</span><span class="mv dn" id="dnCnt">—</span></div>
+  <div class="mitem"><span class="ml">平盤</span><span class="mv nt" id="flatCnt">—</span></div>
+  <div class="mitem"><span class="ml">黃金交叉</span><span class="mv" id="gcCnt" style="color:var(--gold)">—</span></div>
+  <div class="mitem"><span class="ml">死亡交叉</span><span class="mv dn" id="dcCnt">—</span></div>
+  <div class="mitem"><span class="ml" id="updateLbl" style="color:var(--text4)">等待報價…</span></div>
+</div>
+
+<div class="layout with-banner" id="layout">
+  <div class="sidebar" id="sidebar"></div>
+  <div class="content">
+    <div class="mob-tabs" id="mobTabs"></div>
+    <div class="view-head">
+      <div class="view-title" id="viewTitle">半導體</div>
+      <div class="view-cnt" id="viewCnt"></div>
+    </div>
+    <div class="sort-bar">
+      <span class="sort-lbl">排序：</span>
+      <button class="sort-btn active" data-sort="default">代號</button>
+      <button class="sort-btn" data-sort="change">漲跌%</button>
+      <button class="sort-btn" data-sort="price">現價</button>
+      <button class="sort-btn" data-sort="pe">P/E</button>
+    </div>
+    <div class="stock-grid" id="stockGrid"></div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closePanel()"></div>
+<div class="panel" id="panel">
+  <div class="panel-head">
+    <button class="close-btn" onclick="closePanel()">✕</button>
+    <div style="flex:1">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <span class="panel-id" id="pId"></span>
+        <span class="panel-sec-lbl" id="pSec"></span>
+      </div>
+      <div class="panel-name" id="pName"></div>
+    </div>
+  </div>
+  <div class="panel-body" id="pBody"></div>
+</div>
+
+<script>
+// ════════════════════════════
+//  SECTORS DATABASE
+// ════════════════════════════
+const SECTORS = {
+"半導體":{ stocks:[
+  {id:"2330",name:"台積電",ex:"tse",desc:"全球最大晶圓代工廠，主力在3nm/5nm先進製程與CoWoS先進封裝，為Apple、NVIDIA核心製造夥伴。",up:"ASML、Applied Materials、SUMCO",mid:"台積電（晶圓代工）",dn:"Apple、NVIDIA、AMD、Qualcomm",clients:"Apple、NVIDIA、AMD、Qualcomm、Broadcom",suppliers:"ASML、Tokyo Electron、信越化學",pe:"30.2",pb:"7.1",ps:"11.4",ev:"22.8",rev:["2,228B","2,161B","1,587B"],np:["1,032B","902B","689B"],wl:["CoWoS","3奈米","HBM","AI伺服器","EUV"]},
+  {id:"2454",name:"聯發科",ex:"tse",desc:"全球最大無晶圓廠IC設計公司之一，主攻手機SoC（天璣系列）、Wi-Fi 7、電視晶片。",up:"台積電、三星",mid:"聯發科（IC設計）",dn:"小米、OPPO、vivo",clients:"小米、OPPO、vivo、三星",suppliers:"台積電、三星",pe:"18.5",pb:"3.2",ps:"3.8",ev:"14.2",rev:["467B","448B","533B"],np:["60B","57B","94B"],wl:["5G","Wi-Fi 7","手機SoC","天璣"]},
+  {id:"2303",name:"聯電",ex:"tse",desc:"成熟製程晶圓代工（28nm/40nm），主攻消費性、工業、汽車電子，全球前三大晶圓代工廠。",up:"Applied Materials、Lam Research",mid:"聯電（晶圓代工）",dn:"Marvell、瑞昱、聯發科",clients:"Marvell、瑞昱、聯發科",suppliers:"Applied Materials、KLA",pe:"12.8",pb:"1.5",ps:"2.1",ev:"9.1",rev:["218B","205B","277B"],np:["34B","29B","75B"],wl:["28奈米","成熟製程","碳化矽","電動車"]},
+  {id:"2379",name:"瑞昱",ex:"tse",desc:"全球領先網路IC設計公司，涵蓋乙太網路控制器、音訊IC、Wi-Fi晶片。",up:"台積電",mid:"瑞昱（IC設計）",dn:"HP、Dell、Lenovo、ASUS",clients:"HP、Dell、Lenovo、ASUS",suppliers:"台積電、聯電",pe:"21.3",pb:"3.8",ps:"4.2",ev:"16.5",rev:["128B","119B","102B"],np:["26B","22B","17B"],wl:["Wi-Fi 7","乙太網路","5G","物聯網"]},
+  {id:"2337",name:"旺宏",ex:"tse",desc:"全球最大NOR Flash記憶體供應商，主要服務汽車電子、工業控制、網通市場。",up:"東京威力科創",mid:"旺宏（NOR Flash）",dn:"STMicro、Renesas、Infineon",clients:"STMicro、Renesas、Infineon",suppliers:"半導體材料供應商",pe:"N/A",pb:"0.9",ps:"1.8",ev:"N/A",rev:["14B","18B","22B"],np:["-2B","1B","8B"],wl:["NOR Flash","汽車電子","工業控制"]},
+  {id:"6533",name:"矽創",ex:"tse",desc:"電源管理IC（PMIC）與顯示驅動IC設計，服務消費性電子與車用市場。",up:"台積電",mid:"矽創（IC設計）",dn:"Samsung、BOE",clients:"三星、京東方、天馬",suppliers:"台積電",pe:"16.2",pb:"2.7",ps:"3.1",ev:"12.4",rev:["18B","16B","14B"],np:["3B","3B","2B"],wl:["PMIC","AMOLED","車用IC"]},
+  {id:"2344",name:"華邦電",ex:"tse",desc:"全球前三大DRAM與NOR Flash廠，利基型DRAM與消費性記憶體為主力。",up:"Applied Materials、Lam Research",mid:"華邦電（DRAM/NOR）",dn:"消費電子品牌廠",clients:"消費電子品牌廠",suppliers:"Applied Materials、KLA",pe:"N/A",pb:"0.8",ps:"1.2",ev:"N/A",rev:["51B","48B","63B"],np:["-4B","-1B","12B"],wl:["DRAM","NOR Flash","IoT"]},
+  {id:"2408",name:"南亞科",ex:"tse",desc:"台灣最大DRAM製造商，以DDR4/DDR5為主力，與Micron合作取得最新製程授權。",up:"Micron、Applied Materials",mid:"南亞科（DRAM）",dn:"PC廠、伺服器廠",clients:"PC廠、伺服器廠",suppliers:"Micron、Applied Materials",pe:"N/A",pb:"1.1",ps:"1.5",ev:"N/A",rev:["32B","28B","46B"],np:["-6B","-4B","18B"],wl:["DRAM","DDR5","AI伺服器"]},
+  {id:"3034",name:"聯詠",ex:"tse",desc:"全球最大顯示驅動IC廠，產品覆蓋手機OLED、TV面板、車用顯示，並跨足AI邊緣推論晶片。",up:"台積電",mid:"聯詠（IC設計）",dn:"Samsung、BOE、友達",clients:"三星、BOE、友達",suppliers:"台積電",pe:"17.8",pb:"3.9",ps:"2.6",ev:"13.5",rev:["93B","85B","102B"],np:["15B","13B","21B"],wl:["顯示驅動IC","OLED","TDDI","車用顯示"]},
+  {id:"2385",name:"群聯",ex:"tse",desc:"全球最大NAND Flash控制器IC設計廠，涵蓋SSD、USB、記憶卡控制晶片。",up:"台積電",mid:"群聯（NAND控制器）",dn:"Kingston、Western Digital",clients:"Kingston、Western Digital、各品牌",suppliers:"台積電、NAND Flash廠",pe:"19.0",pb:"4.2",ps:"2.8",ev:"14.0",rev:["72B","65B","58B"],np:["13B","11B","9B"],wl:["NAND Flash","SSD","PCIe"]}
+]},
+"記憶體":{ stocks:[
+  {id:"2408",name:"南亞科",ex:"tse",desc:"台灣最大DRAM製造商，以DDR4/DDR5為主力，與Micron合作取得最新製程授權。",up:"Micron、Applied Materials",mid:"南亞科（DRAM）",dn:"PC廠、伺服器廠",clients:"PC廠、伺服器廠",suppliers:"Micron、Applied Materials",pe:"N/A",pb:"1.1",ps:"1.5",ev:"N/A",rev:["32B","28B","46B"],np:["-6B","-4B","18B"],wl:["DRAM","DDR5","HBM","AI伺服器"]},
+  {id:"2344",name:"華邦電",ex:"tse",desc:"全球前三大DRAM與NOR Flash廠，利基型DRAM（LPDDR4）與消費性記憶體。",up:"Applied Materials、Lam Research",mid:"華邦電（DRAM/NOR）",dn:"消費電子品牌廠",clients:"消費電子品牌廠",suppliers:"Applied Materials、KLA",pe:"N/A",pb:"0.8",ps:"1.2",ev:"N/A",rev:["51B","48B","63B"],np:["-4B","-1B","12B"],wl:["DRAM","NOR Flash","IoT","利基記憶體"]},
+  {id:"2337",name:"旺宏",ex:"tse",desc:"全球最大NOR Flash記憶體供應商，汽車電子、工業控制、網通為主要市場。",up:"東京威力科創",mid:"旺宏（NOR Flash）",dn:"STMicro、Renesas",clients:"STMicro、Renesas、Infineon",suppliers:"半導體材料供應商",pe:"N/A",pb:"0.9",ps:"1.8",ev:"N/A",rev:["14B","18B","22B"],np:["-2B","1B","8B"],wl:["NOR Flash","汽車電子","工業控制"]},
+  {id:"2385",name:"群聯",ex:"tse",desc:"全球最大NAND Flash控制器IC設計廠，SSD、USB隨身碟、記憶卡控制晶片。",up:"台積電",mid:"群聯（NAND控制器）",dn:"Kingston、Western Digital",clients:"Kingston、Western Digital、各品牌",suppliers:"台積電、NAND Flash廠",pe:"19.0",pb:"4.2",ps:"2.8",ev:"14.0",rev:["72B","65B","58B"],np:["13B","11B","9B"],wl:["NAND Flash","SSD","PCIe"]}
+]},
+"電子零件":{ stocks:[
+  {id:"2317",name:"鴻海",ex:"tse",desc:"全球最大EMS廠，代工組裝iPhone與AI伺服器，積極轉型電動車（鴻華先進）。",up:"Apple、NVIDIA",mid:"鴻海（EMS組裝）",dn:"Apple、HP、Dell、NVIDIA",clients:"Apple、HP、Dell、NVIDIA",suppliers:"台積電、三星",pe:"11.5",pb:"1.3",ps:"0.3",ev:"7.8",rev:["6,162B","6,163B","6,003B"],np:["152B","143B","138B"],wl:["Apple","AI伺服器","電動車","iPhone"]},
+  {id:"2382",name:"廣達",ex:"tse",desc:"全球最大筆電代工廠，大力轉攻AI伺服器（GB200），NVIDIA重要AI伺服器夥伴。",up:"NVIDIA、Intel",mid:"廣達（ODM）",dn:"HP、Dell、Meta、Google",clients:"HP、Dell、Meta、Microsoft、Google",suppliers:"NVIDIA、Intel、台積電",pe:"22.8",pb:"5.1",ps:"0.5",ev:"18.2",rev:["1,388B","1,245B","1,053B"],np:["44B","35B","27B"],wl:["AI伺服器","NVIDIA","GB200","液冷散熱"]},
+  {id:"2308",name:"台達電",ex:"tse",desc:"全球電源供應器龍頭，延伸至工業自動化、電動車充電、AI資料中心散熱。",up:"Vicor",mid:"台達電（電源/自動化）",dn:"Google、Meta、Tesla",clients:"Google、Meta、HP、Tesla",suppliers:"電子零件供應商",pe:"28.5",pb:"6.8",ps:"2.8",ev:"21.3",rev:["397B","368B","338B"],np:["39B","35B","30B"],wl:["AI伺服器","電動車","充電樁","液冷散熱"]},
+  {id:"2409",name:"友達",ex:"tse",desc:"全球第三大TFT-LCD面板廠，積極布局Mini LED、車用顯示器。",up:"康寧、住友化學",mid:"友達（面板製造）",dn:"Samsung、LG、Sony",clients:"三星、LG、Sony",suppliers:"康寧、住友化學、默克",pe:"8.3",pb:"0.5",ps:"0.4",ev:"4.1",rev:["255B","248B","287B"],np:["10B","8B","22B"],wl:["OLED","Mini LED","車用顯示器"]},
+  {id:"2301",name:"光寶科",ex:"tse",desc:"電源供應器、LED、連接器多角化，AI伺服器電源比重快速提升。",up:"台積電、各零組件廠",mid:"光寶科（電源/LED）",dn:"Dell、HP、Amazon",clients:"Dell、HP、Amazon",suppliers:"台積電、各電子元件廠",pe:"18.0",pb:"2.8",ps:"1.0",ev:"13.0",rev:["202B","188B","175B"],np:["14B","12B","10B"],wl:["AI伺服器","電源供應器","LED"]},
+  {id:"2356",name:"英業達",ex:"tse",desc:"伺服器、筆電ODM，AI伺服器（GB200/H100）快速成長，是NVIDIA重要組裝夥伴。",up:"NVIDIA、Intel",mid:"英業達（ODM）",dn:"Dell、HP、Amazon",clients:"Dell、HP、Amazon、Microsoft",suppliers:"NVIDIA、Intel",pe:"15.0",pb:"2.2",ps:"0.3",ev:"11.0",rev:["618B","555B","480B"],np:["19B","16B","12B"],wl:["AI伺服器","NVIDIA","GB200"]},
+  {id:"2474",name:"可成",ex:"tse",desc:"Apple iPhone金屬機殼關鍵供應商，近年布局電動車電池結構件分散風險。",up:"Apple",mid:"可成（金屬機殼）",dn:"Apple",clients:"Apple",suppliers:"鋁合金材料廠",pe:"18.5",pb:"1.6",ps:"2.0",ev:"13.0",rev:["30B","28B","32B"],np:["4B","3.5B","4.5B"],wl:["Apple","iPhone","電動車","精密機殼"]}
+]},
+"電腦硬體":{ stocks:[
+  {id:"2357",name:"華碩",ex:"tse",desc:"全球第三大PC品牌，涵蓋筆電、主機板、顯示卡（ROG電競），AI PC佔比上升。",up:"Intel、AMD、NVIDIA",mid:"華碩（PC品牌）",dn:"消費者/企業客戶",clients:"全球消費者、企業用戶",suppliers:"Intel、AMD、NVIDIA",pe:"14.2",pb:"2.1",ps:"0.6",ev:"10.5",rev:["588B","533B","462B"],np:["25B","22B","17B"],wl:["ROG","AMD","NVIDIA","電競","AI PC"]},
+  {id:"2353",name:"宏碁",ex:"tse",desc:"全球PC品牌，主力市場歐洲與北美，Predator電競品牌成長，布局AI PC。",up:"Intel、AMD",mid:"宏碁（PC品牌）",dn:"消費者/企業客戶",clients:"全球消費者",suppliers:"Intel、AMD、廣達、仁寶",pe:"11.6",pb:"1.4",ps:"0.3",ev:"8.2",rev:["279B","267B","289B"],np:["8B","7B","12B"],wl:["Intel","AMD","AI PC"]},
+  {id:"2324",name:"仁寶",ex:"tse",desc:"全球第二大筆電代工廠，積極布局AI伺服器、車用電子、醫療設備。",up:"Intel、NVIDIA",mid:"仁寶（ODM）",dn:"HP、Dell、Lenovo",clients:"HP、Dell、Lenovo、Acer",suppliers:"Intel、NVIDIA",pe:"10.5",pb:"1.0",ps:"0.2",ev:"7.3",rev:["1,052B","997B","903B"],np:["16B","14B","12B"],wl:["AI伺服器","AI PC","車用電子"]},
+  {id:"3231",name:"緯創",ex:"tse",desc:"伺服器、筆電ODM，AI伺服器比重快速提升，布局AI邊緣運算與HPC裝置。",up:"NVIDIA、Intel",mid:"緯創（ODM）",dn:"Dell、Google、Amazon",clients:"Dell、Google、Amazon、Microsoft",suppliers:"NVIDIA、Intel",pe:"20.1",pb:"2.8",ps:"0.4",ev:"15.6",rev:["1,023B","882B","695B"],np:["21B","18B","10B"],wl:["AI伺服器","NVIDIA","HPC"]}
+]},
+"軍工/國防":{ stocks:[
+  {id:"1503",name:"士電",ex:"tse",desc:"台灣最大電力設備廠，近年轉型國防電子，承接海軍艦艇電力系統、軍用電源模組。",up:"台電、國防部",mid:"士電（電力/國防電子）",dn:"台電、海軍、空軍",clients:"台電、海軍、空軍",suppliers:"Siemens、ABB",pe:"25.0",pb:"3.5",ps:"2.0",ev:"18.0",rev:["18B","15B","13B"],np:["2.5B","2B","1.5B"],wl:["國防電子","艦艇電力","軍用電源"]},
+  {id:"2634",name:"漢翔",ex:"tse",desc:"台灣唯一航空工業公司，製造勇鷹高教機、F-16升級、無人機，台灣航太自主核心。",up:"GE Aviation、Pratt & Whitney",mid:"漢翔（航空製造）",dn:"空軍、中科院",clients:"空軍、中科院、民航",suppliers:"GE Aviation、Pratt & Whitney",pe:"35.0",pb:"4.2",ps:"2.8",ev:"26.0",rev:["28B","25B","22B"],np:["3B","2.5B","2B"],wl:["勇鷹高教機","F-16","無人機","航太"]},
+  {id:"1590",name:"亞德客",ex:"tse",desc:"氣壓元件龍頭廠，產品廣泛應用於軍工設備、國防製造、精密機械、半導體設備。",up:"金屬材料廠",mid:"亞德客（氣壓元件）",dn:"國防工廠、精密機械廠",clients:"國防工廠、精密機械廠、半導體廠",suppliers:"金屬材料廠",pe:"28.0",pb:"7.0",ps:"5.5",ev:"20.0",rev:["28B","26B","22B"],np:["7B","6B","5B"],wl:["氣壓元件","工業自動化","國防製造"]},
+  {id:"3324",name:"雙鴻",ex:"tse",desc:"精密散熱模組廠，供應軍用電子、AI伺服器高效散熱，近年液冷比重提升。",up:"銅材供應商",mid:"雙鴻（散熱模組）",dn:"軍工電子廠、AI伺服器廠",clients:"軍方電子廠、AI伺服器廠",suppliers:"銅材供應商",pe:"30.0",pb:"5.5",ps:"3.5",ev:"22.0",rev:["15B","12B","10B"],np:["2.5B","2B","1.5B"],wl:["液冷散熱","AI伺服器","軍用電子"]},
+  {id:"2467",name:"志聖",ex:"tse",desc:"高精密烤箱、固化爐設備，客戶涵蓋國防電子、航太複合材料、半導體製程設備。",up:"耐火材料供應商",mid:"志聖（精密設備）",dn:"航太廠、國防廠",clients:"航太廠、國防廠、半導體廠",suppliers:"耐火材料廠",pe:"22.0",pb:"3.0",ps:"2.5",ev:"16.0",rev:["4B","3.5B","3B"],np:["0.8B","0.7B","0.5B"],wl:["國防電子","航太材料","精密設備"]},
+  {id:"3228",name:"訊連",ex:"tse",desc:"AI影像辨識軟體公司，軍事AI監控、人臉辨識、情境感知系統為重要業務。",up:"—",mid:"訊連（AI軟體）",dn:"軍方、政府機關",clients:"軍方、政府、企業安防",suppliers:"—",pe:"30.0",pb:"5.0",ps:"6.0",ev:"22.0",rev:["4B","3.5B","3B"],np:["0.8B","0.7B","0.5B"],wl:["AI影像辨識","人臉辨識","軍事AI"]}
+]},
+"低軌衛星":{ stocks:[
+  {id:"3062",name:"建漢",ex:"tse",desc:"衛星地面站天線設備、射頻元件供應商，供應Starlink等低軌衛星地面站業者。",up:"銅材、金屬供應商",mid:"建漢（天線/RF設備）",dn:"Starlink、衛星業者",clients:"Starlink、衛星地面站業者",suppliers:"銅材廠",pe:"28.0",pb:"4.0",ps:"3.0",ev:"21.0",rev:["8B","7B","5B"],np:["1.5B","1.2B","0.8B"],wl:["低軌衛星","Starlink","天線","LEO"]},
+  {id:"3044",name:"健鼎",ex:"tse",desc:"高頻高速PCB廠，供應衛星通訊、5G基站、AI伺服器高頻板，技術門檻高。",up:"銅箔基板廠",mid:"健鼎（高頻PCB）",dn:"Starlink、5G設備廠",clients:"衛星業者、5G廠、AI伺服器廠",suppliers:"銅箔基板廠",pe:"18.0",pb:"3.0",ps:"2.5",ev:"13.0",rev:["32B","29B","25B"],np:["5.5B","4.8B","4B"],wl:["低軌衛星","PCB","5G","AI伺服器"]},
+  {id:"2383",name:"台光電",ex:"tse",desc:"高速覆銅基板（CCL）供應商，主供AI伺服器ABF載板、衛星通訊高頻PCB基材。",up:"玻纖廠、銅箔廠",mid:"台光電（覆銅基板）",dn:"健鼎、欣興、南亞電路板",clients:"健鼎、欣興、南亞電路板",suppliers:"玻纖廠、銅箔廠",pe:"22.0",pb:"3.8",ps:"2.8",ev:"16.0",rev:["29B","26B","24B"],np:["4.5B","4B","3.5B"],wl:["低軌衛星","ABF載板","CCL","AI伺服器"]},
+  {id:"3515",name:"華擎",ex:"tse",desc:"工業主機板與嵌入式運算，供應衛星地面站控制系統、邊緣AI運算、工業IoT。",up:"Intel、AMD",mid:"華擎（工業主機板）",dn:"衛星地面站業者、工業廠",clients:"衛星地面站業者、工業廠",suppliers:"Intel、AMD",pe:"15.0",pb:"2.5",ps:"1.5",ev:"11.0",rev:["22B","20B","18B"],np:["4B","3.5B","3B"],wl:["低軌衛星","工業IoT","邊緣AI"]},
+  {id:"3049",name:"和鑫",ex:"tse",desc:"衛星通訊模組、相位陣列天線（PAA）關鍵供應商，切入SpaceX Starlink供應鏈。",up:"台積電、各RF元件廠",mid:"和鑫（衛星模組）",dn:"SpaceX、衛星業者",clients:"SpaceX、衛星通訊業者",suppliers:"台積電、RF元件廠",pe:"32.0",pb:"5.0",ps:"4.0",ev:"24.0",rev:["6B","5B","4B"],np:["1.2B","1B","0.7B"],wl:["低軌衛星","相位陣列天線","Starlink"]},
+  {id:"6547",name:"晶宏",ex:"otc",desc:"衛星定位（GNSS）與無線通訊SoC IC設計，應用於低軌衛星定位、車用導航、智慧物流。",up:"台積電",mid:"晶宏（GNSS IC設計）",dn:"衛星設備廠、車廠",clients:"衛星設備廠、車廠、物流廠",suppliers:"台積電",pe:"25.0",pb:"4.5",ps:"5.0",ev:"19.0",rev:["4B","3.5B","3B"],np:["0.8B","0.7B","0.5B"],wl:["低軌衛星","GNSS","車用導航"]}
+]},
+"金融保險":{ stocks:[
+  {id:"2882",name:"國泰金",ex:"tse",desc:"台灣最大金控，旗下國泰人壽、國泰世華銀行、國泰產險。",up:"—",mid:"國泰金（金控）",dn:"個人/企業客戶",clients:"個人、企業、法人",suppliers:"—",pe:"16.8",pb:"1.2",ps:"1.5",ev:"—",rev:["538B","492B","384B"],np:["36B","28B","48B"],wl:["壽險","銀行","資產管理"]},
+  {id:"2881",name:"富邦金",ex:"tse",desc:"台灣第二大金控，旗下台北富邦銀行、富邦人壽，積極布局數位金融。",up:"—",mid:"富邦金（金控）",dn:"個人/企業客戶",clients:"個人、企業、法人",suppliers:"—",pe:"14.5",pb:"1.1",ps:"1.3",ev:"—",rev:["489B","445B","378B"],np:["38B","30B","52B"],wl:["壽險","銀行","Fintech"]},
+  {id:"2886",name:"兆豐金",ex:"tse",desc:"政策性金融背景金控，以企金、外匯、貿易融資見長，國際業務佔比高。",up:"—",mid:"兆豐金（金控）",dn:"企業/法人客戶",clients:"企業、政府、法人",suppliers:"—",pe:"12.3",pb:"1.0",ps:"1.8",ev:"—",rev:["108B","98B","87B"],np:["19B","18B","16B"],wl:["外匯","貿易融資","銀行"]}
+]},
+"電動車/汽車電子":{ stocks:[
+  {id:"6770",name:"力智",ex:"tse",desc:"電動車與儲能MOSFET、GaN元件IC設計，台灣電動車半導體新興供應商。",up:"台積電",mid:"力智（IC設計）",dn:"Tesla、BYD",clients:"Tesla、BYD、整車廠",suppliers:"台積電",pe:"28.0",pb:"4.5",ps:"5.2",ev:"21.0",rev:["12B","9B","6B"],np:["2B","1B","0.8B"],wl:["電動車","GaN","MOSFET","碳化矽","Tesla"]},
+  {id:"2207",name:"和泰車",ex:"tse",desc:"Toyota台灣總代理，市占率長期居第一，積極引進Lexus電動車與PHEV。",up:"Toyota",mid:"和泰車（汽車經銷）",dn:"台灣消費者",clients:"台灣個人消費者",suppliers:"Toyota、Lexus",pe:"15.4",pb:"3.2",ps:"0.8",ev:"11.2",rev:["173B","162B","148B"],np:["13B","12B","10B"],wl:["Toyota","電動車","PHEV","Lexus"]},
+  {id:"3035",name:"智原",ex:"tse",desc:"ASIC設計服務公司，服務車用、AI、網通等客戶的晶片客製化設計需求。",up:"台積電、聯電",mid:"智原（ASIC設計）",dn:"車廠Tier1、雲端業者",clients:"車廠、雲端業者、網通廠",suppliers:"台積電、聯電",pe:"19.8",pb:"3.3",ps:"2.9",ev:"14.1",rev:["16B","14B","13B"],np:["3B","2.5B","2B"],wl:["ASIC","車用電子","AI晶片"]},
+  {id:"6643",name:"M31",ex:"otc",desc:"提供嵌入式記憶體、SerDes、PHY等矽智財（IP）授權，客戶涵蓋車用晶片設計廠。",up:"—",mid:"M31（矽智財）",dn:"Renesas、Infineon",clients:"Renesas、Infineon、聯電客戶",suppliers:"—",pe:"32.0",pb:"6.1",ps:"12.0",ev:"25.0",rev:["2.4B","2.1B","1.8B"],np:["0.8B","0.7B","0.5B"],wl:["矽智財","車用電子","SerDes"]}
+]}
+};
+
+// flatten (dedupe by id+sector)
+const allStocks=[];
+const seen=new Set();
+Object.entries(SECTORS).forEach(([sec,d])=>d.stocks.forEach(s=>{
+  const k=s.id+'|'+sec;
+  if(!seen.has(k)){seen.add(k);allStocks.push({...s,sector:sec});}
+}));
+
+const prices={};
+const maData={};
+let currentSector=Object.keys(SECTORS)[0];
+let currentSort="default";
+let fugleKey=localStorage.getItem('fugle_key')||'';
+let hasBanner=true;
+
+// ── BANNER / KEY SETUP ──
+function initBanner(){
+  if(fugleKey){
+    dismissBanner();
+  }
+}
+function saveKey(){
+  const v=document.getElementById('fugleKeyInput').value.trim();
+  if(!v){alert('請輸入 API Key');return;}
+  fugleKey=v;
+  localStorage.setItem('fugle_key',v);
+  dismissBanner();
+  fetchPrices();
+}
+function dismissBanner(){
+  hasBanner=false;
+  document.getElementById('setupBanner').classList.add('hidden');
+  document.getElementById('header').className='header no-banner';
+  document.getElementById('mbar').className='mbar no-banner';
+  document.getElementById('layout').className='layout no-banner';
+}
+
+// ── MA ──
+function simulateMA(id){
+  const seed=parseInt(id.replace(/\D/g,''))%17;
+  const s=['gc-s','dc-s','gc-m','dc-m','gc-l','dc-l','near-gc','near-dc','none','none','none','gc-s','gc-m','none','near-gc','dc-s','none'];
+  return s[seed]||'none';
+}
+function maCls(st){
+  const m={'gc-s':{lbl:'短金叉',cls:'badge-gc-s'},'dc-s':{lbl:'短死叉',cls:'badge-dc-s'},'gc-m':{lbl:'中金叉',cls:'badge-gc-m'},'dc-m':{lbl:'中死叉',cls:'badge-dc-m'},'gc-l':{lbl:'長金叉',cls:'badge-gc-l'},'dc-l':{lbl:'長死叉',cls:'badge-dc-l'},'near-gc':{lbl:'近金叉',cls:'badge-near-gc'},'near-dc':{lbl:'近死叉',cls:'badge-near-dc'}};
+  return m[st]||null;
+}
+
+// ── RIVER CHART ──
+function drawRiver(canvas,pe){
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width=canvas.offsetWidth||460;
+  const H=canvas.height=canvas.offsetHeight||150;
+  ctx.clearRect(0,0,W,H);
+  const pad={l:30,r:8,t:6,b:20};
+  const cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
+  const maxPE=42;
+  const bands=[{pe:8,c:'rgba(42,122,80,0.2)',lbl:'嚴重低估'},{pe:13,c:'rgba(42,122,80,0.12)',lbl:'低估'},{pe:18,c:'rgba(191,161,74,0.1)',lbl:'合理偏低'},{pe:23,c:'rgba(193,127,62,0.1)',lbl:'合理'},{pe:30,c:'rgba(184,48,48,0.1)',lbl:'偏高'},{pe:42,c:'rgba(184,48,48,0.18)',lbl:'高估'}];
+  const pyY=p=>pad.t+ch*(1-Math.min(p,maxPE)/maxPE);
+  const pyX=i=>pad.l+(i/11)*cw;
+  for(let i=0;i<bands.length-1;i++){
+    const y1=pyY(bands[i+1].pe),y2=pyY(bands[i].pe);
+    ctx.fillStyle=bands[i].c;ctx.fillRect(pad.l,y1,cw,y2-y1);
+    ctx.fillStyle='rgba(100,80,50,0.4)';ctx.font='8.5px sans-serif';
+    ctx.fillText(bands[i].lbl,pad.l+3,y2-2);
+  }
+  const pe0=parseFloat(pe)||18;
+  const hist=[];let v=pe0*(0.75+Math.random()*0.4);
+  for(let i=0;i<12;i++){v=Math.max(5,Math.min(40,v+(Math.random()-0.48)*2.5));hist.push(v);}
+  hist[11]=pe0;
+  ctx.beginPath();ctx.strokeStyle='rgba(193,127,62,0.9)';ctx.lineWidth=2;
+  hist.forEach((p,i)=>{const x=pyX(i),y=pyY(p);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);});
+  ctx.stroke();
+  const cx=pyX(11),cy=pyY(pe0);
+  ctx.beginPath();ctx.arc(cx,cy,4.5,0,Math.PI*2);ctx.fillStyle='rgba(193,127,62,1)';ctx.fill();
+  ctx.fillStyle='#2C2416';ctx.font='bold 9.5px sans-serif';ctx.fillText('P/E '+pe0,cx-16,cy-7);
+  const yr=new Date().getFullYear();
+  ctx.fillStyle='rgba(155,139,120,0.75)';ctx.font='8.5px sans-serif';
+  [0,2,4,6,8,10,11].forEach(i=>ctx.fillText(String(yr-11+i),pyX(i)-8,H-4));
+  [10,15,20,25,30,35].forEach(p=>{
+    const y=pyY(p);
+    ctx.strokeStyle='rgba(155,139,120,0.15)';ctx.lineWidth=0.5;
+    ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();
+    ctx.fillStyle='rgba(155,139,120,0.7)';ctx.font='8px sans-serif';ctx.fillText(p,2,y+3);
+  });
+}
+
+// ── NAV ──
+function buildNav(){
+  const sb=document.getElementById('sidebar');
+  sb.innerHTML='<div class="sb-head">產業分類</div>';
+  const mt=document.getElementById('mobTabs');
+  mt.innerHTML='';
+  Object.entries(SECTORS).forEach(([name,d])=>{
+    const btn=document.createElement('button');
+    btn.className='sb-btn'+(name===currentSector?' active':'');
+    btn.innerHTML=`<span>${name}</span><span class="sb-cnt">${d.stocks.length}</span>`;
+    btn.onclick=()=>{currentSector=name;buildNav();renderGrid();};
+    sb.appendChild(btn);
+    const t=document.createElement('button');
+    t.className='mob-tab'+(name===currentSector?' active':'');
+    t.textContent=name;
+    t.onclick=()=>{currentSector=name;buildNav();renderGrid();};
+    mt.appendChild(t);
+  });
+}
+
+// ── GRID ──
+function renderGrid(){
+  const data=SECTORS[currentSector];
+  document.getElementById('viewTitle').textContent=currentSector;
+  let stocks=[...data.stocks];
+  if(currentSort==='change') stocks.sort((a,b)=>(prices[b.id]?.pct||0)-(prices[a.id]?.pct||0));
+  else if(currentSort==='price') stocks.sort((a,b)=>(prices[b.id]?.price||0)-(prices[a.id]?.price||0));
+  else if(currentSort==='pe') stocks.sort((a,b)=>(parseFloat(a.pe)||999)-(parseFloat(b.pe)||999));
+  document.getElementById('viewCnt').textContent=stocks.length+' 檔';
+  const grid=document.getElementById('stockGrid');
+  grid.innerHTML='';
+  stocks.forEach(s=>{
+    const p=prices[s.id];
+    const maI=maCls(maData[s.id]||'none');
+    let priceHtml,chgHtml,chgCls='nt';
+    if(!p){
+      priceHtml='<div class="loading-pulse"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
+      chgHtml='<span class="price-chg nt">—</span>';
+    } else {
+      chgCls=p.change>0?'up':p.change<0?'dn':'nt';
+      const sign=p.change>0?'+':'';
+      priceHtml=`<div class="price-main">${p.price.toFixed(2)}</div><div class="price-sub">整張 NT$${Math.round(p.price*1000).toLocaleString()}</div>`;
+      chgHtml=`<span class="price-chg ${chgCls}">${sign}${p.pct.toFixed(2)}%</span>`;
+    }
+    const card=document.createElement('div');
+    card.className='stock-card';
+    card.innerHTML=`<div class="card-top"><span class="card-id">${s.id}</span><div class="card-badges">${maI?`<span class="badge ${maI.cls}">${maI.lbl}</span>`:''}<span class="badge badge-sec">${currentSector}</span></div></div><div class="card-name">${s.name}</div><div class="card-desc">${s.desc}</div><div class="card-footer"><div>${priceHtml}</div>${chgHtml}</div>`;
+    card.onclick=()=>openPanel(s,currentSector);
+    grid.appendChild(card);
+  });
+}
+
+// ── PANEL ──
+function openPanel(s,sectorName){
+  const p=prices[s.id];
+  const sector=sectorName||s.sector||'—';
+  let priceSec='';
+  if(!p){
+    const keyMsg=fugleKey?'報價載入中…':'請先設定 API Key 以顯示報價';
+    priceSec=`<div style="font-size:13px;color:var(--text3);padding:4px 0">${keyMsg}</div>
+    ${!fugleKey?`<div class="price-note">💡 申請免費 Fugle API Key：<a href="https://developer.fugle.tw" target="_blank" style="color:var(--accent)">developer.fugle.tw</a>，申請後在頁面頂部輸入 Key 即可啟用報價。</div>`:''}`;
+  } else {
+    const cls=p.change>0?'up':p.change<0?'dn':'nt';
+    const sign=p.change>0?'+':'';
+    priceSec=`<div class="big-price-row"><div class="big-price">${p.price.toFixed(2)}</div><span class="big-chg ${cls}">${sign}${p.pct.toFixed(2)}%</span><span class="big-chg ${cls}">${sign}${p.change.toFixed(2)}</span></div>
+    <div class="price-detail-row"><span>整張 NT$${Math.round(p.price*1000).toLocaleString()}</span><span>零股 NT$${p.price.toFixed(2)}</span>${p.prevClose?`<span>昨收 ${p.prevClose.toFixed(2)}</span>`:''}</div>`;
+  }
+  const maSt=maData[s.id]||'none';
+  const pe0=parseFloat(s.pe)||18;
+  const pairs=[
+    {lbl:'5日 × 20日',st:['gc-s','dc-s','near-gc','near-dc'].includes(maSt)?maSt:'none'},
+    {lbl:'20日 × 60日',st:['gc-m','dc-m'].includes(maSt)?maSt:'none'},
+    {lbl:'60日 × 120日',st:['gc-l','dc-l'].includes(maSt)?maSt:'none'},
+  ];
+  const stL={'gc-s':'黃金交叉','dc-s':'死亡交叉','gc-m':'黃金交叉','dc-m':'死亡交叉','gc-l':'黃金交叉','dc-l':'死亡交叉','near-gc':'接近金叉','near-dc':'接近死叉','none':'無交叉'};
+  const stC={'gc-s':'badge-gc-s','dc-s':'badge-dc-s','gc-m':'badge-gc-m','dc-m':'badge-dc-m','gc-l':'badge-gc-l','dc-l':'badge-dc-l','near-gc':'badge-near-gc','near-dc':'badge-near-dc','none':''};
+
+  document.getElementById('pId').textContent=s.id;
+  document.getElementById('pSec').textContent='· '+sector;
+  document.getElementById('pName').textContent=s.name;
+  document.getElementById('pBody').innerHTML=`
+    <div class="psec"><div class="psec-title"><span>即時報價</span><span style="font-size:9px;color:var(--text4);text-transform:none;letter-spacing:0;font-weight:400">Fugle API · 盤中即時</span></div>${priceSec}</div>
+    <div class="psec">
+      <div class="psec-title">P/E 河流圖（歷史估值區間）</div>
+      <div class="river-wrap"><canvas class="river-canvas" id="riverCanvas"></canvas></div>
+      <div class="river-legend">
+        <div class="rl-item"><div class="rl-dot" style="background:rgba(42,122,80,0.5)"></div><span style="color:var(--text3)">低估區</span></div>
+        <div class="rl-item"><div class="rl-dot" style="background:rgba(191,161,74,0.5)"></div><span style="color:var(--text3)">合理區</span></div>
+        <div class="rl-item"><div class="rl-dot" style="background:rgba(184,48,48,0.4)"></div><span style="color:var(--text3)">高估區</span></div>
+        <div class="rl-item"><div class="rl-dot" style="background:rgba(193,127,62,0.9);height:3px;width:16px;border-radius:1px;margin-top:3px"></div><span style="color:var(--text3)">歷史P/E</span></div>
+      </div>
+      <div class="notice">⚠️ 河流圖為示意，正式版將串接歷史EPS計算真實本益比帶。</div>
+    </div>
+    <div class="psec">
+      <div class="psec-title">均線交叉訊號</div>
+      <table class="ma-table">
+        <tr><th style="text-align:left">均線組合</th><th>短均</th><th>長均</th><th>狀態</th></tr>
+        ${pairs.map(pair=>{
+          const ma1=(pe0*0.95+Math.random()*4).toFixed(1);
+          const ma2=(pe0*0.90+Math.random()*4).toFixed(1);
+          return `<tr><td>${pair.lbl}</td><td>${ma1}</td><td>${ma2}</td><td><span class="cross-tag ${stC[pair.st]}">${stL[pair.st]}</span></td></tr>`;
+        }).join('')}
+      </table>
+      <div class="notice">⚠️ 均線為示意，正式版將串接歷史收盤計算真實MA值。</div>
+    </div>
+    <div class="psec"><div class="psec-title">估值指標</div>
+      <div class="mets-grid">
+        <div class="met-box"><div class="met-lbl">P/E 本益比</div><div class="met-val">${s.pe}</div></div>
+        <div class="met-box"><div class="met-lbl">P/B 股價淨值比</div><div class="met-val">${s.pb}</div></div>
+        <div class="met-box"><div class="met-lbl">P/S 市銷率</div><div class="met-val">${s.ps}</div></div>
+        <div class="met-box"><div class="met-lbl">EV/EBITDA</div><div class="met-val">${s.ev}</div></div>
+      </div>
+    </div>
+    <div class="psec"><div class="psec-title">業務簡介</div><p style="font-size:13px;line-height:1.75;color:var(--text2)">${s.desc}</p></div>
+    <div class="psec"><div class="psec-title">供應鏈位置</div>
+      <div class="sc-wrap">
+        <div class="sc-row"><span class="sc-lbl">上游</span><div class="tags">${s.up.split('、').map(t=>`<span class="tag">${t}</span>`).join('')}</div></div>
+        <div class="sc-row"><span class="sc-lbl">中游</span><div class="tags"><span class="tag tag-self">${s.mid}</span></div></div>
+        <div class="sc-row"><span class="sc-lbl">下游</span><div class="tags">${s.dn.split('、').map(t=>`<span class="tag">${t}</span>`).join('')}</div></div>
+      </div>
+    </div>
+    <div class="psec"><div class="psec-title">主要客戶與供應商</div>
+      <div style="font-size:12.5px;color:var(--text2);line-height:1.8">
+        <div><span style="color:var(--text4)">客戶：</span>${s.clients}</div>
+        <div><span style="color:var(--text4)">供應商：</span>${s.suppliers}</div>
+      </div>
+    </div>
+    <div class="psec"><div class="psec-title">近三年財務（百萬台幣）</div>
+      <table class="fin-tbl">
+        <tr><th>項目</th><th>2024</th><th>2023</th><th>2022</th></tr>
+        <tr><td>營收</td><td>${s.rev[0]}</td><td>${s.rev[1]}</td><td>${s.rev[2]}</td></tr>
+        <tr><td>稅後淨利</td><td>${s.np[0]}</td><td>${s.np[1]}</td><td>${s.np[2]}</td></tr>
+      </table>
+    </div>
+    <div class="psec"><div class="psec-title">相關主題標籤</div><div class="wiki-tags">${s.wl.map(w=>`<span class="wtag">[[${w}]]</span>`).join('')}</div></div>`;
+
+  document.getElementById('panel').classList.add('open');
+  document.getElementById('overlay').classList.add('show');
+  setTimeout(()=>{const c=document.getElementById('riverCanvas');if(c)drawRiver(c,s.pe);},100);
+}
+function closePanel(){
+  document.getElementById('panel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+// ── SORT ──
+document.querySelectorAll('.sort-btn').forEach(btn=>{
+  btn.onclick=()=>{currentSort=btn.dataset.sort;document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderGrid();};
+});
+
+// ── SEARCH ──
+const si=document.getElementById('searchInput'),sd=document.getElementById('searchDrop');
+si.addEventListener('input',()=>{
+  const q=si.value.trim().toLowerCase();
+  if(!q){sd.classList.remove('show');return}
+  const hits=allStocks.filter(s=>s.id.includes(q)||s.name.includes(q)||s.sector.includes(q)).slice(0,8);
+  if(!hits.length){sd.classList.remove('show');return}
+  sd.innerHTML=hits.map(s=>`<div class="sdrop-item" onclick="selectStock('${s.id}','${s.sector}')"><span class="sdrop-id">${s.id}</span><span class="sdrop-name">${s.name}</span><span class="sdrop-sec">${s.sector}</span></div>`).join('');
+  sd.classList.add('show');
+});
+document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap'))sd.classList.remove('show');});
+function selectStock(id,sec){
+  si.value='';sd.classList.remove('show');
+  currentSector=sec;buildNav();renderGrid();
+  const s=allStocks.find(x=>x.id===id&&x.sector===sec)||allStocks.find(x=>x.id===id);
+  if(s)setTimeout(()=>openPanel(s,sec),80);
+}
+
+// ── FETCH PRICES via Fugle REST API ──
+async function fetchPrices(){
+  if(!fugleKey){document.getElementById('updateLbl').textContent='請設定 API Key 啟用報價';return;}
+  const uniqueIds=[...new Map(allStocks.map(s=>[s.id,s])).values()];
+  let loaded=0,up=0,dn=0,flat=0;
+  // Fugle intraday quote: GET /intraday/quote/{symbol}
+  // Free tier: 60 req/min → batch sequentially with small delay
+  const chunks=[];
+  for(let i=0;i<uniqueIds.length;i+=10) chunks.push(uniqueIds.slice(i,i+10));
+  for(const chunk of chunks){
+    await Promise.allSettled(chunk.map(async s=>{
+      try{
+        const sym=s.ex==='otc'?s.id+'O':s.id; // Fugle format
+        const url=`https://api.fugle.tw/marketdata/v1.0/stock/intraday/quote/${sym}`;
+        const r=await fetch(url,{headers:{'X-API-KEY':fugleKey}});
+        if(!r.ok)return;
+        const d=await r.json();
+        if(d.closePrice||d.lastPrice){
+          const price=d.closePrice||d.lastPrice||0;
+          const prevClose=d.previousClose||d.referencePrice||0;
+          const change=price-prevClose;
+          const pct=prevClose?(change/prevClose)*100:0;
+          prices[s.id]={price,change,pct,prevClose};
+          loaded++;
+          if(change>0)up++;else if(change<0)dn++;else flat++;
+        }
+      }catch(e){}
+    }));
+    await new Promise(r=>setTimeout(r,200)); // rate limit
+  }
+  renderGrid();
+  const now=new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  if(loaded>0){
+    document.getElementById('updateLbl').textContent=`更新 ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+    document.getElementById('loadedCnt').textContent=loaded;
+    document.getElementById('upCnt').textContent=up;
+    document.getElementById('dnCnt').textContent=dn;
+    document.getElementById('flatCnt').textContent=flat;
+  } else {
+    document.getElementById('updateLbl').textContent='API Key 無效或報價暫時無法載入';
+  }
+}
+
+// ── CLOCK & MA INIT ──
+function updateClock(){
+  const now=new Date();const pad=n=>String(n).padStart(2,'0');
+  document.getElementById('clock').textContent=`${now.getFullYear()}/${pad(now.getMonth()+1)}/${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+}
+function initMA(){
+  allStocks.forEach(s=>{maData[s.id]=simulateMA(s.id);});
+  const gc=allStocks.filter(s=>['gc-s','gc-m','gc-l'].includes(maData[s.id])).length;
+  const dc=allStocks.filter(s=>['dc-s','dc-m','dc-l'].includes(maData[s.id])).length;
+  document.getElementById('gcCnt').textContent=gc;
+  document.getElementById('dcCnt').textContent=dc;
+}
+
+// ── INIT ──
+initBanner();
+initMA();
+buildNav();
+renderGrid();
+fetchPrices();
+setInterval(fetchPrices,60000);
+setInterval(updateClock,1000);
+updateClock();
+</script>
+</body>
+</html>
