@@ -1,0 +1,80 @@
+name: Fetch Taiwan Stock Prices
+
+on:
+  schedule:
+    - cron: '*/5 1-7 * * 1-5'  # 每5分鐘，只在台股交易時間（UTC 01:00~07:00 = 台灣 09:00~15:00，週一到週五）
+  workflow_dispatch:  # 允許手動觸發
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Fetch prices from TWSE
+        run: |
+          python3 << 'PYEOF'
+          import urllib.request
+          import json
+          import time
+
+          stocks = {
+            "tse": ["2330","2454","2303","2379","2337","6533","2344","2408","3034","2385",
+                    "2317","2382","2308","2409","2301","2356","2474","2393",
+                    "2357","2353","2324","3231",
+                    "1503","2634","1590","3324","2467","3228",
+                    "3062","3044","2383","3515","3049",
+                    "2882","2881","2886",
+                    "6770","2207","3035"],
+            "otc": ["6547","6643"]
+          }
+
+          results = {}
+
+          for ex, ids in stocks.items():
+            ex_ch = "|".join([f"{ex}_{sid}.tw" for sid in ids])
+            url = f"https://mis.twse.com.tw/stock/api/getStockInfo.jsp?ex_ch={ex_ch}&json=1&delay=0&_={int(time.time()*1000)}"
+            try:
+              req = urllib.request.Request(url, headers={
+                "User-Agent": "Mozilla/5.0",
+                "Referer": "https://mis.twse.com.tw/stock/index.jsp"
+              })
+              with urllib.request.urlopen(req, timeout=15) as r:
+                data = json.loads(r.read())
+                for q in data.get("msgArray", []):
+                  sid = q.get("c", "")
+                  price = float(q.get("z", 0) or q.get("b", 0) or 0)
+                  prev  = float(q.get("y", 0) or 0)
+                  if price > 0 and sid:
+                    change = round(price - prev, 2)
+                    pct    = round((change / prev * 100) if prev else 0, 2)
+                    results[sid] = {
+                      "price": price,
+                      "change": change,
+                      "pct": pct,
+                      "prevClose": prev
+                    }
+            except Exception as e:
+              print(f"Error fetching {ex}: {e}")
+            time.sleep(1)
+
+          results["_updated"] = int(time.time())
+          results["_count"]   = len(results) - 2
+
+          with open("prices.json", "w") as f:
+            json.dump(results, f)
+
+          print(f"Done: {results['_count']} stocks")
+          PYEOF
+
+      - name: Commit prices.json
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add prices.json
+          git diff --staged --quiet || git commit -m "chore: update prices $(date '+%Y-%m-%d %H:%M')"
+          git push
