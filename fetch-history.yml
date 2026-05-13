@@ -1,0 +1,172 @@
+name: Fetch Taiwan Stock History
+
+on:
+  schedule:
+    - cron: '0 8 * * 1-5'   # 每天台灣時間 16:00（UTC 08:00）收盤後執行
+  workflow_dispatch:          # 允許手動觸發
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: pip install requests --quiet
+
+      - name: Fetch 5-year history
+        run: |
+          python3 << 'PYEOF'
+          import requests
+          import json
+          import time
+          from datetime import datetime, timedelta
+
+          # 所有股票代號（上市tse / 上櫃otc）
+          STOCKS = {
+            "tse": ["2330","2454","2303","2379","2337","6533","2344","2408","3034","2385",
+                    "2317","2382","2308","2409","2301","2356","2474","2393",
+                    "2357","2353","2324","3231",
+                    "1503","2634","1590","3324","2467","3228",
+                    "3062","3044","2383","3515","3049",
+                    "2882","2881","2886",
+                    "6770","2207","3035",
+                    "3017","2237","2400","6669","3057","8299",
+                    "3037","2313","2316","2345","2444",
+                    "2327","2492","2481","2485","2457",
+                    "2397","2462","2498","4904","3706","2036"],
+            "otc": ["6547","6643","2444"]
+          }
+          ALL_IDS = [(sid, ex) for ex, ids in STOCKS.items() for sid in ids]
+
+          # 計算過去5年的年月範圍
+          today = datetime.today()
+          months = []
+          for delta in range(60):  # 60個月 = 5年
+            d = today - timedelta(days=delta*30)
+            months.append(d.strftime("%Y%m") + "01")
+          months = sorted(set(months))  # 去重並排序
+
+          history = {}
+
+          for sid, ex in ALL_IDS:
+            print(f"Fetching {sid}...")
+            prices = {}   # {date: close_price}
+            eps_data = {}  # {year_q: eps}
+
+            # ── 1. 抓歷史收盤價（TWSE 月資料）──
+            for ym in months:
+              try:
+                if ex == "tse":
+                  url = f"https://www.twse.com.tw/exchangeReport/STOCK_DAY?response=json&date={ym}&stockNo={sid}"
+                else:
+                  url = f"https://www.tpex.org.tw/web/stock/aftertrading/daily_trading_info/st43_result.php?l=zh-tw&d={ym[:4]}/{ym[4:6]}&stkno={sid}&s=0,asc"
+
+                r = requests.get(url, timeout=10,
+                  headers={"User-Agent": "Mozilla/5.0",
+                           "Referer": "https://www.twse.com.tw/"})
+
+                if ex == "tse":
+                  data = r.json()
+                  if data.get("stat") == "OK":
+                    for row in data.get("data", []):
+                      # row: [日期, 成交股數, 成交金額, 開盤, 最高, 最低, 收盤, 漲跌, 筆數]
+                      try:
+                        date_str = row[0].replace("/", "-")  # 民國年
+                        # 轉西元年
+                        parts = date_str.split("-")
+                        year = int(parts[0]) + 1911
+                        date_key = f"{year}-{parts[1]}-{parts[2]}"
+                        close = float(row[6].replace(",", ""))
+                        prices[date_key] = close
+                      except:
+                        pass
+                else:
+                  # 上櫃格式不同
+                  data = r.json()
+                  rows = data.get("aaData", [])
+                  for row in rows:
+                    try:
+                      date_str = row[0].replace("/", "-")
+                      parts = date_str.split("-")
+                      year = int(parts[0]) + 1911
+                      date_key = f"{year}-{parts[1]}-{parts[2]}"
+                      close = float(str(row[6]).replace(",", ""))
+                      prices[date_key] = close
+                    except:
+                      pass
+
+                time.sleep(0.4)  # 避免被封鎖
+
+              except Exception as e:
+                print(f"  price error {sid} {ym}: {e}")
+                time.sleep(1)
+
+            # ── 2. 抓 EPS（公開資訊觀測站）──
+            try:
+              eps_url = f"https://mops.twse.com.tw/mops/web/ajax_t163sb04"
+              eps_payload = {
+                "encodeURIComponent": "1",
+                "step": "1",
+                "firstin": "1",
+                "off": "1",
+                "queryName": "co_id",
+                "inpuType": "co_id",
+                "TYPEK": "all",
+                "isnew": "false",
+                "co_id": sid,
+                "year": "",
+                "season": ""
+              }
+              er = requests.post(eps_url, data=eps_payload, timeout=15,
+                headers={"User-Agent":"Mozilla/5.0",
+                         "Referer":"https://mops.twse.com.tw/"})
+              # 解析HTML表格中的EPS數字
+              import re
+              text = er.text
+              # 找季度EPS數字
+              pattern = r'(\d{3})[年/](\d)[季].*?(-?\d+\.\d+)'
+              matches = re.findall(pattern, text)
+              for m in matches:
+                try:
+                  year = int(m[0]) + 1911
+                  q = int(m[1])
+                  eps = float(m[2])
+                  key = f"{year}Q{q}"
+                  eps_data[key] = eps
+                except:
+                  pass
+              time.sleep(0.5)
+            except Exception as e:
+              print(f"  eps error {sid}: {e}")
+
+            # ── 3. 整理：只保留近5年有資料的日期 ──
+            cutoff = (today - timedelta(days=365*5)).strftime("%Y-%m-%d")
+            prices = {k: v for k, v in prices.items() if k >= cutoff}
+
+            history[sid] = {
+              "prices": prices,
+              "eps": eps_data
+            }
+            print(f"  {sid}: {len(prices)} days, {len(eps_data)} quarters")
+
+          history["_updated"] = int(time.time())
+          history["_count"] = len(history) - 1
+
+          with open("history.json", "w", encoding="utf-8") as f:
+            json.dump(history, f, ensure_ascii=False)
+
+          print(f"\n完成！共 {history['_count']} 檔股票歷史資料")
+          PYEOF
+
+      - name: Commit history.json
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add history.json
+          git diff --staged --quiet || git commit -m "chore: update history $(date '+%Y-%m-%d')"
+          git push
